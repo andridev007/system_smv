@@ -6,11 +6,11 @@
     <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
-                <span class="text-white text-lg font-semibold">{{ substr($userName, 0, 1) }}</span>
+                <span class="text-white text-lg font-semibold">{{ substr($userName ?? 'U', 0, 1) }}</span>
             </div>
             <div>
                 <p class="text-gray-400 text-sm">Welcome back,</p>
-                <h2 class="text-lg font-semibold text-white">{{ $userName }}</h2>
+                <h2 class="text-lg font-semibold text-white">{{ $userName ?? 'User' }}</h2>
             </div>
         </div>
         <button class="relative p-2 text-gray-400 hover:text-white transition-colors">

@@ -11,16 +11,20 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-        // Get authenticated user or use dummy data
+        // Get authenticated user (route is protected by auth middleware)
         $user = $request->user();
         
-        // Dashboard data (dummy values for now - can be replaced with real data)
+        // Get user name with fallback for demo purposes
+        $userName = $user?->name ?? $user?->username ?? 'User';
+        $referralCode = $user?->referral_code ?? 'DEMO' . rand(100, 999);
+        
+        // Dashboard data (dummy values for now - can be replaced with real data from models)
         $data = [
-            'userName' => $user->name ?? 'John Doe',
+            'userName' => $userName,
             'mainWalletBalance' => 2850.75,
             'profitWalletBalance' => 425.50,
             'weeklyEarnings' => 125.30,
-            'referralUrl' => url('/register?ref=' . ($user->referral_code ?? 'ABC123')),
+            'referralUrl' => url('/register?ref=' . $referralCode),
             
             // Stats
             'totalDeposit' => 5000.00,
