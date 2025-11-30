@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
-
 class DashboardController extends Controller
 {
     /**
@@ -11,22 +9,25 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
-        $referralCode = $user?->referral_code ?? '';
-        
-        // Placeholder data for the dashboard
-        $data = [
-            'balance' => 0,
-            'profit_balance' => 0,
-            'total_deposit' => 0,
-            'total_investment' => 0,
-            'total_profit' => 0,
-            'referral_bonus' => 0,
-            'total_transactions' => 0,
-            'referral_link' => $referralCode ? url('/register?ref=' . $referralCode) : url('/register'),
-            'recent_transactions' => [],
-        ];
+        // Dummy data for dashboard display
+        $balance = 0.00;
+        $profit = 0.00;
+        $total_deposit = 0.00;
+        $total_invest = 0.00;
+        $total_withdraw = 0.00;
+        $total_profit = 0.00;
+        $referral_bonus = 0.00;
+        $referral_code = auth()->user()->referral_code ?? 'SAMUVE001';
 
-        return view('dashboard.index', $data);
+        return view('dashboard.index', compact(
+            'balance',
+            'profit',
+            'total_deposit',
+            'total_invest',
+            'total_withdraw',
+            'total_profit',
+            'referral_bonus',
+            'referral_code'
+        ));
     }
 }
