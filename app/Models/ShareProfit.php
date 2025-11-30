@@ -2,21 +2,24 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ShareProfit extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'investment_id',
         'amount',
-        'percentage',
         'date',
+        'percentage',
     ];
 
     /**
@@ -28,13 +31,13 @@ class ShareProfit extends Model
     {
         return [
             'amount' => 'decimal:2',
-            'percentage' => 'decimal:2',
             'date' => 'date',
+            'percentage' => 'decimal:2',
         ];
     }
 
     /**
-     * Get the investment that owns the share profit.
+     * Get the investment that this share profit belongs to.
      */
     public function investment(): BelongsTo
     {

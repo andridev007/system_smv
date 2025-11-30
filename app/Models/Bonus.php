@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Bonus extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'user_id',
@@ -43,10 +46,26 @@ class Bonus extends Model
     }
 
     /**
-     * Get the user that triggered the bonus.
+     * Get the user that the bonus originated from.
      */
     public function fromUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'from_user_id');
+    }
+
+    /**
+     * Check if this is a referral bonus.
+     */
+    public function isReferral(): bool
+    {
+        return $this->type === 'referral';
+    }
+
+    /**
+     * Check if this is a profit share bonus.
+     */
+    public function isProfitShare(): bool
+    {
+        return $this->type === 'profit_share';
     }
 }
