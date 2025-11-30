@@ -4,9 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ShareProfit extends Model
+class ProgramSetting extends Model
 {
     use HasFactory;
 
@@ -16,10 +15,10 @@ class ShareProfit extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'investment_id',
-        'amount',
-        'date',
-        'percentage',
+        'name',
+        'min_deposit',
+        'license_fee_percent',
+        'daily_profit_estimate',
     ];
 
     /**
@@ -30,17 +29,9 @@ class ShareProfit extends Model
     protected function casts(): array
     {
         return [
-            'amount' => 'decimal:2',
-            'date' => 'date',
-            'percentage' => 'decimal:2',
+            'min_deposit' => 'decimal:2',
+            'license_fee_percent' => 'decimal:2',
+            'daily_profit_estimate' => 'decimal:2',
         ];
-    }
-
-    /**
-     * Get the investment that this share profit belongs to.
-     */
-    public function investment(): BelongsTo
-    {
-        return $this->belongsTo(Investment::class);
     }
 }

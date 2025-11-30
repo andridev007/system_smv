@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Investment extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'user_id',
@@ -21,10 +24,9 @@ class Investment extends Model
         'unique_code',
         'total_transfer',
         'status',
-        'payment_proof',
-        'start_date',
-        'end_date',
-        'active',
+        'proof_image',
+        'effective_date',
+        'active_balance',
     ];
 
     /**
@@ -37,10 +39,10 @@ class Investment extends Model
         return [
             'amount' => 'decimal:2',
             'license_fee' => 'decimal:2',
+            'unique_code' => 'integer',
             'total_transfer' => 'decimal:2',
-            'start_date' => 'date',
-            'end_date' => 'date',
-            'active' => 'boolean',
+            'effective_date' => 'datetime',
+            'active_balance' => 'decimal:2',
         ];
     }
 
@@ -53,10 +55,58 @@ class Investment extends Model
     }
 
     /**
-     * Get the share profits for the investment.
+     * Get the share profits for this investment.
      */
     public function shareProfits(): HasMany
     {
         return $this->hasMany(ShareProfit::class);
+    }
+
+    /**
+     * Check if the investment is pending.
+     */
+    public function isPending(): bool
+    {
+        return $this->status === 'pending';
+    }
+
+    /**
+     * Check if the investment is active.
+     */
+    public function isActive(): bool
+    {
+        return $this->status === 'active';
+    }
+
+    /**
+     * Check if the investment is completed.
+     */
+    public function isCompleted(): bool
+    {
+        return $this->status === 'completed';
+    }
+
+    /**
+     * Check if the investment is rejected.
+     */
+    public function isRejected(): bool
+    {
+        return $this->status === 'rejected';
+    }
+
+    /**
+     * Check if this is a daily investment type.
+     */
+    public function isDaily(): bool
+    {
+        return $this->type === 'daily';
+    }
+
+    /**
+     * Check if this is a dream investment type.
+     */
+    public function isDream(): bool
+    {
+        return $this->type === 'dream';
     }
 }

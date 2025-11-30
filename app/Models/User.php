@@ -2,41 +2,40 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'name',
-        'username',
         'email',
+        'password',
+        'username',
         'phone',
         'referral_code',
         'upline_id',
         'bank_name',
-        'account_number',
-        'account_name',
-        'is_verified',
-        'password',
+        'bank_account_name',
+        'bank_account_number',
+        'role',
+        'is_active',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -53,12 +52,12 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_verified' => 'boolean',
+            'is_active' => 'boolean',
         ];
     }
 
     /**
-     * Get the user's upline (referrer).
+     * Get the upline (referrer) of this user.
      */
     public function upline(): BelongsTo
     {
@@ -66,7 +65,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the user's downlines (referred users).
+     * Get the downlines (referrals) of this user.
      */
     public function downlines(): HasMany
     {
@@ -74,7 +73,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the user's investments.
+     * Get the investments for this user.
      */
     public function investments(): HasMany
     {
@@ -82,7 +81,23 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the user's withdrawals.
+     * Get the bonuses received by this user.
+     */
+    public function bonuses(): HasMany
+    {
+        return $this->hasMany(Bonus::class);
+    }
+
+    /**
+     * Get the bonuses given by this user (as source).
+     */
+    public function givenBonuses(): HasMany
+    {
+        return $this->hasMany(Bonus::class, 'from_user_id');
+    }
+
+    /**
+     * Get the withdrawals for this user.
      */
     public function withdrawals(): HasMany
     {
@@ -90,10 +105,18 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the user's bonuses.
+     * Check if the user is an admin.
      */
-    public function bonuses(): HasMany
+    public function isAdmin(): bool
     {
-        return $this->hasMany(Bonus::class);
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Check if the user is a member.
+     */
+    public function isMember(): bool
+    {
+        return $this->role === 'member';
     }
 }
