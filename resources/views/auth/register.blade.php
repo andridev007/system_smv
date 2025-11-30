@@ -15,7 +15,7 @@
             </div>
         @endif
 
-        <form method="POST" action="/register">
+        <form method="POST" action="{{ route('register') }}">
             @csrf
 
             <div class="mb-4">
@@ -68,7 +68,7 @@
 
         <p class="mt-6 text-center text-slate-400">
             Already have an account?
-            <a href="/login" class="text-blue-400 hover:text-blue-300 font-medium">Login</a>
+            <a href="{{ route('login') }}" class="text-blue-400 hover:text-blue-300 font-medium">Login</a>
         </p>
     </div>
 </div>
