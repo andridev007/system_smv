@@ -17,7 +17,7 @@ return new class extends Migration
             $table->enum('type', ['daily', 'dream']);
             $table->decimal('amount', 15, 2);
             $table->decimal('license_fee', 15, 2);
-            $table->integer('unique_code');
+            $table->integer('unique_code')->unique();
             $table->decimal('total_transfer', 15, 2);
             $table->enum('status', ['pending', 'active', 'rejected', 'completed'])->default('pending');
             $table->string('payment_proof')->nullable();
