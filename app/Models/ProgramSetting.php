@@ -2,23 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ProgramSetting extends Model
 {
-    use HasFactory;
-
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'name',
-        'min_deposit',
-        'license_fee_percent',
-        'daily_profit_estimate',
+        'min_amount',
+        'license_percent',
+        'withdraw_fee_percent',
     ];
 
     /**
@@ -29,9 +26,9 @@ class ProgramSetting extends Model
     protected function casts(): array
     {
         return [
-            'min_deposit' => 'decimal:2',
-            'license_fee_percent' => 'decimal:2',
-            'daily_profit_estimate' => 'decimal:2',
+            'min_amount' => 'decimal:2',
+            'license_percent' => 'decimal:2',
+            'withdraw_fee_percent' => 'decimal:2',
         ];
     }
 }

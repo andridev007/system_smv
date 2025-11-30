@@ -21,12 +21,11 @@ class Investment extends Model
         'type',
         'amount',
         'license_fee',
-        'unique_code',
-        'total_transfer',
+        'effective_balance',
+        'total_earned',
         'status',
-        'proof_image',
-        'effective_date',
-        'active_balance',
+        'proof_file',
+        'is_auto_compound',
     ];
 
     /**
@@ -39,10 +38,9 @@ class Investment extends Model
         return [
             'amount' => 'decimal:2',
             'license_fee' => 'decimal:2',
-            'unique_code' => 'integer',
-            'total_transfer' => 'decimal:2',
-            'effective_date' => 'datetime',
-            'active_balance' => 'decimal:2',
+            'effective_balance' => 'decimal:2',
+            'total_earned' => 'decimal:2',
+            'is_auto_compound' => 'boolean',
         ];
     }
 

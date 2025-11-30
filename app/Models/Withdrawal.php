@@ -23,7 +23,7 @@ class Withdrawal extends Model
         'source',
         'bank_details_snapshot',
         'status',
-        'proof_image',
+        'proof_file',
     ];
 
     /**
@@ -37,7 +37,6 @@ class Withdrawal extends Model
             'amount' => 'decimal:2',
             'fee' => 'decimal:2',
             'final_amount' => 'decimal:2',
-            'bank_details_snapshot' => 'array',
         ];
     }
 

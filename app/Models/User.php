@@ -23,13 +23,12 @@ class User extends Authenticatable
         'password',
         'username',
         'phone',
+        'password',
         'referral_code',
         'upline_id',
         'bank_name',
-        'bank_account_name',
-        'bank_account_number',
-        'role',
-        'is_active',
+        'account_number',
+        'account_holder',
     ];
 
     /**
@@ -52,12 +51,11 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_active' => 'boolean',
         ];
     }
 
     /**
-     * Get the upline (referrer) of this user.
+     * Get the upline (referrer) of the user.
      */
     public function upline(): BelongsTo
     {
@@ -65,7 +63,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the downlines (referrals) of this user.
+     * Get the downline (referrals) of the user.
      */
     public function downlines(): HasMany
     {
@@ -73,7 +71,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the investments for this user.
+     * Get the investments for the user.
      */
     public function investments(): HasMany
     {
@@ -81,7 +79,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the bonuses received by this user.
+     * Get the bonuses received by the user.
      */
     public function bonuses(): HasMany
     {
@@ -89,34 +87,18 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the bonuses given by this user (as source).
+     * Get the bonuses triggered by the user.
      */
-    public function givenBonuses(): HasMany
+    public function triggeredBonuses(): HasMany
     {
         return $this->hasMany(Bonus::class, 'from_user_id');
     }
 
     /**
-     * Get the withdrawals for this user.
+     * Get the withdrawals for the user.
      */
     public function withdrawals(): HasMany
     {
         return $this->hasMany(Withdrawal::class);
-    }
-
-    /**
-     * Check if the user is an admin.
-     */
-    public function isAdmin(): bool
-    {
-        return $this->role === 'admin';
-    }
-
-    /**
-     * Check if the user is a member.
-     */
-    public function isMember(): bool
-    {
-        return $this->role === 'member';
     }
 }
