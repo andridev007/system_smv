@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\WtUser>
  */
-class UserFactory extends Factory
+class WtUserFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
