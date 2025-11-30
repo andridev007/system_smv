@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\WtUser;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,9 +15,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        WtUser::factory()->create([
-            'username' => 'testuser',
-            'nama_user' => 'Test User',
+        $this->call([
+            SettingsSeeder::class,
+        ]);
+
+        // User::factory(10)->create();
+
+        User::factory()->create([
+            'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
     }
