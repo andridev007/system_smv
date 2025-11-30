@@ -14,14 +14,12 @@ return new class extends Migration
         Schema::create('bonuses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->unsignedBigInteger('from_user_id');
+            $table->foreignId('from_user_id')->constrained('users')->onDelete('cascade');
             $table->enum('type', ['referral', 'profit_share']);
             $table->decimal('amount', 15, 2);
             $table->integer('level');
             $table->string('description');
             $table->timestamps();
-
-            $table->foreign('from_user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
