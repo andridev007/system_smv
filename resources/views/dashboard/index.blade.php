@@ -21,7 +21,7 @@
                     </svg>
                     <span class="text-purple-200 text-sm font-medium">Main Wallet</span>
                 </div>
-                <p class="text-3xl font-bold text-white">$@php echo number_format($balance, 2) @endphp</p>
+                <p class="text-3xl font-bold text-white">${{ number_format($balance, 2) }}</p>
                 <p class="text-purple-200 text-sm">Available Balance</p>
             </div>
             <!-- Profit Wallet -->
@@ -32,7 +32,7 @@
                     </svg>
                     <span class="text-purple-200 text-sm font-medium">Profit Wallet</span>
                 </div>
-                <p class="text-3xl font-bold text-white">$@php echo number_format($profit_balance, 2) @endphp</p>
+                <p class="text-3xl font-bold text-white">${{ number_format($profit_balance, 2) }}</p>
                 <p class="text-purple-200 text-sm">Total Earnings</p>
             </div>
         </div>
@@ -82,7 +82,7 @@
                     </svg>
                 </div>
             </div>
-            <p class="text-2xl font-bold text-white">$@php echo number_format($total_deposit, 2) @endphp</p>
+            <p class="text-2xl font-bold text-white">${{ number_format($total_deposit, 2) }}</p>
             <p class="text-sm text-gray-400 mt-1">Total Deposit</p>
         </div>
 
@@ -95,7 +95,7 @@
                     </svg>
                 </div>
             </div>
-            <p class="text-2xl font-bold text-white">$@php echo number_format($total_investment, 2) @endphp</p>
+            <p class="text-2xl font-bold text-white">${{ number_format($total_investment, 2) }}</p>
             <p class="text-sm text-gray-400 mt-1">Total Investment</p>
         </div>
 
@@ -108,7 +108,7 @@
                     </svg>
                 </div>
             </div>
-            <p class="text-2xl font-bold text-white">$@php echo number_format($total_profit, 2) @endphp</p>
+            <p class="text-2xl font-bold text-white">${{ number_format($total_profit, 2) }}</p>
             <p class="text-sm text-gray-400 mt-1">Total Profit</p>
         </div>
 
@@ -121,7 +121,7 @@
                     </svg>
                 </div>
             </div>
-            <p class="text-2xl font-bold text-white">$@php echo number_format($referral_bonus, 2) @endphp</p>
+            <p class="text-2xl font-bold text-white">${{ number_format($referral_bonus, 2) }}</p>
             <p class="text-sm text-gray-400 mt-1">Referral Bonus</p>
         </div>
     </div>
@@ -203,8 +203,21 @@
 <script>
     function copyReferralLink() {
         const link = document.getElementById('referral-link').innerText;
+        const button = document.querySelector('[onclick="copyReferralLink()"]');
+        const originalContent = button.innerHTML;
+        
         navigator.clipboard.writeText(link).then(() => {
-            alert('Referral link copied to clipboard!');
+            // Show success state on button
+            button.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>Copied!</span>';
+            button.classList.remove('bg-purple-600', 'hover:bg-purple-700');
+            button.classList.add('bg-emerald-600');
+            
+            // Restore original state after 2 seconds
+            setTimeout(() => {
+                button.innerHTML = originalContent;
+                button.classList.remove('bg-emerald-600');
+                button.classList.add('bg-purple-600', 'hover:bg-purple-700');
+            }, 2000);
         }).catch(err => {
             console.error('Failed to copy: ', err);
         });

@@ -85,11 +85,11 @@
                 <div class="p-4 border-t border-navy-700">
                     <div class="flex items-center space-x-3">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
-                            <span class="text-sm font-semibold">{{ substr(auth()->user()->name ?? 'U', 0, 1) }}</span>
+                            <span class="text-sm font-semibold">{{ substr(auth()->user()?->name ?? 'U', 0, 1) }}</span>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium truncate">{{ auth()->user()->name ?? 'User' }}</p>
-                            <p class="text-xs text-gray-400 truncate">{{ auth()->user()->email ?? 'user@example.com' }}</p>
+                            <p class="text-sm font-medium truncate">{{ auth()->user()?->name ?? 'User' }}</p>
+                            <p class="text-xs text-gray-400 truncate">{{ auth()->user()?->email ?? 'user@example.com' }}</p>
                         </div>
                     </div>
                 </div>
@@ -131,7 +131,7 @@
                             <div class="relative" x-data="{ open: false }">
                                 <button class="flex items-center space-x-2 p-1.5 rounded-lg hover:bg-navy-700 transition-colors">
                                     <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
-                                        <span class="text-xs font-semibold">{{ substr(auth()->user()->name ?? 'U', 0, 1) }}</span>
+                                        <span class="text-xs font-semibold">{{ substr(auth()->user()?->name ?? 'U', 0, 1) }}</span>
                                     </div>
                                     <svg class="w-4 h-4 text-gray-400 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
