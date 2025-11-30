@@ -2,80 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     /**
      * Display the user dashboard.
      */
-    public function index(Request $request)
+    public function index()
     {
-        // Get authenticated user (route is protected by auth middleware)
-        $user = $request->user();
+        $user = Auth::user();
+        $referralCode = $user?->referral_code ?? '';
         
-        // Get user name with fallback for demo purposes
-        $userName = $user?->name ?? $user?->username ?? 'User';
-        $referralCode = $user?->referral_code ?? 'DEMO' . rand(100, 999);
-        
-        // Dashboard data (dummy values for now - can be replaced with real data from models)
+        // Placeholder data for the dashboard
         $data = [
-            'userName' => $userName,
-            'mainWalletBalance' => 2850.75,
-            'profitWalletBalance' => 425.50,
-            'weeklyEarnings' => 125.30,
-            'referralUrl' => url('/register?ref=' . $referralCode),
-            
-            // Stats
-            'totalDeposit' => 5000.00,
-            'totalInvestment' => 4500.00,
-            'totalProfit' => 850.25,
-            'totalWithdraw' => 1200.00,
-            'referralBonus' => 150.00,
-            'investmentBonus' => 75.50,
-            'rankAchieved' => 'Gold',
-            'totalTicket' => 3,
-            
-            // Recent transactions
-            'recentTransactions' => [
-                [
-                    'type' => 'Deposit',
-                    'amount' => 500.00,
-                    'status' => 'Completed',
-                    'date' => now()->subDays(1)->format('M d, Y'),
-                    'icon' => 'deposit',
-                ],
-                [
-                    'type' => 'Investment',
-                    'amount' => 1000.00,
-                    'status' => 'Active',
-                    'date' => now()->subDays(2)->format('M d, Y'),
-                    'icon' => 'investment',
-                ],
-                [
-                    'type' => 'Profit',
-                    'amount' => 25.50,
-                    'status' => 'Credited',
-                    'date' => now()->subDays(3)->format('M d, Y'),
-                    'icon' => 'profit',
-                ],
-                [
-                    'type' => 'Referral Bonus',
-                    'amount' => 50.00,
-                    'status' => 'Credited',
-                    'date' => now()->subDays(4)->format('M d, Y'),
-                    'icon' => 'referral',
-                ],
-                [
-                    'type' => 'Withdraw',
-                    'amount' => 200.00,
-                    'status' => 'Processing',
-                    'date' => now()->subDays(5)->format('M d, Y'),
-                    'icon' => 'withdraw',
-                ],
-            ],
+            'balance' => 0,
+            'profit_balance' => 0,
+            'total_deposit' => 0,
+            'total_investment' => 0,
+            'total_profit' => 0,
+            'referral_bonus' => 0,
+            'total_transactions' => 0,
+            'referral_link' => $referralCode ? url('/register?ref=' . $referralCode) : url('/register'),
+            'recent_transactions' => [],
         ];
 
-        return view('dashboard', $data);
+        return view('dashboard.index', $data);
     }
 }
