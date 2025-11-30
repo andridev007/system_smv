@@ -52,7 +52,7 @@
                 <input type="text" readonly value="{{ url('/register?ref=' . $referral_code) }}" 
                     id="referral-link"
                     class="flex-1 bg-slate-700 text-sm text-slate-300 px-3 py-2 rounded-lg border border-slate-600 truncate">
-                <button onclick="copyReferralLink()" 
+                <button onclick="copyReferralLink(this)" 
                     class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
                     Copy
                 </button>
@@ -150,14 +150,13 @@
 
 @push('scripts')
 <script>
-    function copyReferralLink() {
+    function copyReferralLink(button) {
         const input = document.getElementById('referral-link');
         input.select();
         input.setSelectionRange(0, 99999);
         navigator.clipboard.writeText(input.value);
         
         // Show feedback
-        const button = event.target;
         const originalText = button.textContent;
         button.textContent = 'Copied!';
         setTimeout(() => {
