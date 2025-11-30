@@ -1,87 +1,79 @@
-@extends('layouts.guest')
+<x-guest-layout>
+    <h1>Register</h1>
 
-@section('content')
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
-        <!-- Full Name -->
-        <div>
-            <label for="name" class="block font-medium text-sm text-gray-300">Full Name</label>
-            <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name"
-                class="block mt-1 w-full rounded-md border-gray-600 bg-gray-700 text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus placeholder="Enter your full name">
             @error('name')
-                <p class="text-sm text-red-400 mt-1">{{ $message }}</p>
+                <div class="error-message">{{ $message }}</div>
             @enderror
         </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <label for="email" class="block font-medium text-sm text-gray-300">Email</label>
-            <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email"
-                class="block mt-1 w-full rounded-md border-gray-600 bg-gray-700 text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" type="email" name="email" value="{{ old('email') }}" required placeholder="Enter your email address">
             @error('email')
-                <p class="text-sm text-red-400 mt-1">{{ $message }}</p>
+                <div class="error-message">{{ $message }}</div>
             @enderror
         </div>
 
-        <!-- Username -->
-        <div class="mt-4">
-            <label for="username" class="block font-medium text-sm text-gray-300">Username</label>
-            <input id="username" type="text" name="username" value="{{ old('username') }}" required autocomplete="username"
-                class="block mt-1 w-full rounded-md border-gray-600 bg-gray-700 text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input id="username" type="text" name="username" value="{{ old('username') }}" required placeholder="Choose a username">
             @error('username')
-                <p class="text-sm text-red-400 mt-1">{{ $message }}</p>
+                <div class="error-message">{{ $message }}</div>
             @enderror
         </div>
 
-        <!-- Phone Number -->
-        <div class="mt-4">
-            <label for="phone" class="block font-medium text-sm text-gray-300">Phone Number</label>
-            <input id="phone" type="text" name="phone" value="{{ old('phone') }}" required autocomplete="tel"
-                class="block mt-1 w-full rounded-md border-gray-600 bg-gray-700 text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+        <div class="form-group">
+            <label for="phone">Phone</label>
+            <input id="phone" type="tel" name="phone" value="{{ old('phone') }}" required placeholder="Enter your phone number">
             @error('phone')
-                <p class="text-sm text-red-400 mt-1">{{ $message }}</p>
+                <div class="error-message">{{ $message }}</div>
             @enderror
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <label for="password" class="block font-medium text-sm text-gray-300">Password</label>
-            <input id="password" type="password" name="password" required autocomplete="new-password"
-                class="block mt-1 w-full rounded-md border-gray-600 bg-gray-700 text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input id="password" type="password" name="password" required placeholder="Create a password">
             @error('password')
-                <p class="text-sm text-red-400 mt-1">{{ $message }}</p>
+                <div class="error-message">{{ $message }}</div>
             @enderror
         </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <label for="password_confirmation" class="block font-medium text-sm text-gray-300">Confirm Password</label>
-            <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password"
-                class="block mt-1 w-full rounded-md border-gray-600 bg-gray-700 text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
-            @error('password_confirmation')
-                <p class="text-sm text-red-400 mt-1">{{ $message }}</p>
-            @enderror
+        <div class="form-group">
+            <label for="password_confirmation">Confirm Password</label>
+            <input id="password_confirmation" type="password" name="password_confirmation" required placeholder="Confirm your password">
         </div>
 
-        <!-- Referral Code -->
-        <div class="mt-4">
-            <label for="referral_code" class="block font-medium text-sm text-gray-300">Referral Code</label>
-            <input id="referral_code" type="text" name="referral_code" value="{{ old('referral_code') }}" autocomplete="off"
-                class="block mt-1 w-full rounded-md border-gray-600 bg-gray-700 text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+        <div class="form-group">
+            <label for="referral_code">Referral Code (Optional)</label>
+            <input id="referral_code" type="text" name="referral_code" value="{{ old('referral_code') }}" placeholder="Enter referral code if you have one">
             @error('referral_code')
-                <p class="text-sm text-red-400 mt-1">{{ $message }}</p>
+                <div class="error-message">{{ $message }}</div>
             @enderror
         </div>
 
-        <div class="flex items-center justify-between mt-4">
-            <a class="underline text-sm text-gray-400 hover:text-gray-200" href="{{ route('login') }}">
-                Already have an account? Login
-            </a>
+        <div class="checkbox-group">
+            <input id="terms" type="checkbox" name="terms" required>
+            <label for="terms">I agree to the <a class="link" href="#">Terms & Conditions</a></label>
+        </div>
+        @error('terms')
+            <div class="error-message" style="margin-top: -0.5rem; margin-bottom: 1rem;">{{ $message }}</div>
+        @enderror
 
-            <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 focus:bg-indigo-500 active:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition ease-in-out duration-150">
+        <div class="form-group">
+            <button type="submit" class="btn">
                 Register
             </button>
         </div>
+
+        <div class="text-center mt-4">
+            <span style="color: #A1A09A; font-size: 0.875rem;">Already have an account?</span>
+            <a class="link" href="{{ route('login') }}">Login</a>
+        </div>
     </form>
-@endsection
+</x-guest-layout>
