@@ -1,45 +1,44 @@
 @extends('layouts.guest')
 
 @section('content')
-<div class="w-full max-w-md p-8 bg-gray-800 rounded-lg shadow-lg">
-    <h2 class="text-2xl font-bold text-center text-white mb-6">Login</h2>
-
-    @if ($errors->any())
-        <div class="mb-4 p-4 bg-red-600 text-white rounded">
-            <ul class="list-disc list-inside">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+    <!-- Session Status -->
+    @if (session('status'))
+        <div class="mb-4 font-medium text-sm text-green-400">
+            {{ session('status') }}
         </div>
     @endif
 
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        <div class="mb-4">
-            <label for="username" class="block text-sm font-medium text-gray-300 mb-2">Username</label>
-            <input type="text" name="username" id="username" value="{{ old('username') }}"
-                   class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                   placeholder="Enter your username" required autofocus>
+        <!-- Username -->
+        <div>
+            <label for="username" class="block font-medium text-sm text-gray-300">Username</label>
+            <input id="username" type="text" name="username" value="{{ old('username') }}" required autofocus autocomplete="username"
+                class="block mt-1 w-full rounded-md border-gray-600 bg-gray-700 text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+            @error('username')
+                <p class="text-sm text-red-400 mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
-        <div class="mb-6">
-            <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
-            <input type="password" name="password" id="password"
-                   class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                   placeholder="Enter your password" required>
+        <!-- Password -->
+        <div class="mt-4">
+            <label for="password" class="block font-medium text-sm text-gray-300">Password</label>
+            <input id="password" type="password" name="password" required autocomplete="current-password"
+                class="block mt-1 w-full rounded-md border-gray-600 bg-gray-700 text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+            @error('password')
+                <p class="text-sm text-red-400 mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
-        <button type="submit"
-                class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800">
-            Login
-        </button>
+        <div class="flex items-center justify-between mt-4">
+            <a class="underline text-sm text-gray-400 hover:text-gray-200" href="{{ route('register') }}">
+                Don't have an account? Register
+            </a>
+
+            <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 focus:bg-indigo-500 active:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                Login
+            </button>
+        </div>
     </form>
-
-    <p class="mt-6 text-center text-gray-400">
-        Don't have an account?
-        <a href="{{ route('register') }}" class="text-blue-400 hover:text-blue-300 underline">Register</a>
-    </p>
-</div>
 @endsection
