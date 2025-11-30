@@ -1,79 +1,75 @@
-<x-guest-layout>
-    <h1>Register</h1>
+@extends('layouts.guest')
 
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+@section('content')
+<div class="w-full max-w-md">
+    <div class="bg-slate-800 rounded-lg shadow-xl p-8">
+        <h2 class="text-2xl font-semibold text-center mb-6">Register</h2>
 
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus placeholder="Enter your full name">
-            @error('name')
-                <div class="error-message">{{ $message }}</div>
-            @enderror
-        </div>
+        @if ($errors->any())
+            <div class="bg-red-500/10 border border-red-500 text-red-500 rounded-lg p-4 mb-6">
+                <ul class="list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input id="email" type="email" name="email" value="{{ old('email') }}" required placeholder="Enter your email address">
-            @error('email')
-                <div class="error-message">{{ $message }}</div>
-            @enderror
-        </div>
+        <form method="POST" action="{{ route('register') }}">
+            @csrf
 
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input id="username" type="text" name="username" value="{{ old('username') }}" required placeholder="Choose a username">
-            @error('username')
-                <div class="error-message">{{ $message }}</div>
-            @enderror
-        </div>
+            <div class="mb-4">
+                <label for="name" class="block text-sm font-medium text-slate-300 mb-2">Full Name</label>
+                <input type="text" name="name" id="name" value="{{ old('name') }}" required autofocus
+                    class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400">
+            </div>
 
-        <div class="form-group">
-            <label for="phone">Phone</label>
-            <input id="phone" type="tel" name="phone" value="{{ old('phone') }}" required placeholder="Enter your phone number">
-            @error('phone')
-                <div class="error-message">{{ $message }}</div>
-            @enderror
-        </div>
+            <div class="mb-4">
+                <label for="email" class="block text-sm font-medium text-slate-300 mb-2">Email</label>
+                <input type="email" name="email" id="email" value="{{ old('email') }}" required
+                    class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400">
+            </div>
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input id="password" type="password" name="password" required placeholder="Create a password">
-            @error('password')
-                <div class="error-message">{{ $message }}</div>
-            @enderror
-        </div>
+            <div class="mb-4">
+                <label for="username" class="block text-sm font-medium text-slate-300 mb-2">Username</label>
+                <input type="text" name="username" id="username" value="{{ old('username') }}" required
+                    class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400">
+            </div>
 
-        <div class="form-group">
-            <label for="password_confirmation">Confirm Password</label>
-            <input id="password_confirmation" type="password" name="password_confirmation" required placeholder="Confirm your password">
-        </div>
+            <div class="mb-4">
+                <label for="phone" class="block text-sm font-medium text-slate-300 mb-2">Phone Number</label>
+                <input type="text" name="phone" id="phone" value="{{ old('phone') }}" required
+                    class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400">
+            </div>
 
-        <div class="form-group">
-            <label for="referral_code">Referral Code (Optional)</label>
-            <input id="referral_code" type="text" name="referral_code" value="{{ old('referral_code') }}" placeholder="Enter referral code if you have one">
-            @error('referral_code')
-                <div class="error-message">{{ $message }}</div>
-            @enderror
-        </div>
+            <div class="mb-4">
+                <label for="password" class="block text-sm font-medium text-slate-300 mb-2">Password</label>
+                <input type="password" name="password" id="password" required
+                    class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400">
+            </div>
 
-        <div class="checkbox-group">
-            <input id="terms" type="checkbox" name="terms" required>
-            <label for="terms">I agree to the <a class="link" href="#">Terms & Conditions</a></label>
-        </div>
-        @error('terms')
-            <div class="error-message" style="margin-top: -0.5rem; margin-bottom: 1rem;">{{ $message }}</div>
-        @enderror
+            <div class="mb-4">
+                <label for="password_confirmation" class="block text-sm font-medium text-slate-300 mb-2">Confirm Password</label>
+                <input type="password" name="password_confirmation" id="password_confirmation" required
+                    class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400">
+            </div>
 
-        <div class="form-group">
-            <button type="submit" class="btn">
+            <div class="mb-6">
+                <label for="referral_code" class="block text-sm font-medium text-slate-300 mb-2">Referral Code</label>
+                <input type="text" name="referral_code" id="referral_code" value="{{ old('referral_code') }}"
+                    class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400">
+            </div>
+
+            <button type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
                 Register
             </button>
-        </div>
+        </form>
 
-        <div class="text-center mt-4">
-            <span style="color: #A1A09A; font-size: 0.875rem;">Already have an account?</span>
-            <a class="link" href="{{ route('login') }}">Login</a>
-        </div>
-    </form>
-</x-guest-layout>
+        <p class="mt-6 text-center text-slate-400">
+            Already have an account?
+            <a href="{{ route('login') }}" class="text-blue-400 hover:text-blue-300 font-medium">Login</a>
+        </p>
+    </div>
+</div>
+@endsection

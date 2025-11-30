@@ -1,40 +1,45 @@
-<x-guest-layout>
-    <h1>Login</h1>
+@extends('layouts.guest')
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+@section('content')
+<div class="w-full max-w-md">
+    <div class="bg-slate-800 rounded-lg shadow-xl p-8">
+        <h2 class="text-2xl font-semibold text-center mb-6">Login</h2>
 
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input id="username" type="text" name="username" value="{{ old('username') }}" required autofocus placeholder="Enter your username">
-            @error('username')
-                <div class="error-message">{{ $message }}</div>
-            @enderror
-        </div>
+        @if ($errors->any())
+            <div class="bg-red-500/10 border border-red-500 text-red-500 rounded-lg p-4 mb-6">
+                <ul class="list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input id="password" type="password" name="password" required placeholder="Enter your password">
-            @error('password')
-                <div class="error-message">{{ $message }}</div>
-            @enderror
-        </div>
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
 
-        <div class="flex-between mt-4">
-            <a class="link" href="#">
-                Forgot Password?
-            </a>
-        </div>
+            <div class="mb-4">
+                <label for="username" class="block text-sm font-medium text-slate-300 mb-2">Username</label>
+                <input type="text" name="username" id="username" value="{{ old('username') }}" required autofocus
+                    class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400">
+            </div>
 
-        <div class="form-group mt-4">
-            <button type="submit" class="btn">
+            <div class="mb-6">
+                <label for="password" class="block text-sm font-medium text-slate-300 mb-2">Password</label>
+                <input type="password" name="password" id="password" required
+                    class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400">
+            </div>
+
+            <button type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
                 Login
             </button>
-        </div>
+        </form>
 
-        <div class="text-center mt-4">
-            <span style="color: #A1A09A; font-size: 0.875rem;">Don't have an account?</span>
-            <a class="link" href="{{ route('register') }}">Register</a>
-        </div>
-    </form>
-</x-guest-layout>
+        <p class="mt-6 text-center text-slate-400">
+            Don't have an account?
+            <a href="{{ route('register') }}" class="text-blue-400 hover:text-blue-300 font-medium">Register</a>
+        </p>
+    </div>
+</div>
+@endsection
