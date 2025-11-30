@@ -2,23 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\View\View;
-
 class AuthController extends Controller
 {
     /**
      * Show the login form.
+     *
+     * @return \Illuminate\View\View
      */
-    public function showLoginForm(): View
+    public function showLoginForm()
     {
         return view('auth.login');
     }
 
     /**
      * Show the registration form.
+     *
+     * @return \Illuminate\View\View
      */
-    public function showRegisterForm(): View
+    public function showRegistrationForm()
     {
         return view('auth.register');
     }
