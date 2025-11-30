@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Http\Controllers;
+
+class DashboardController extends Controller
+{
+    /**
+     * Display the user dashboard.
+     */
+    public function index()
+    {
+        // Dummy data for dashboard display
+        $balance = 0.00;
+        $profit = 0.00;
+        $total_deposit = 0.00;
+        $total_invest = 0.00;
+        $total_withdraw = 0.00;
+        $total_profit = 0.00;
+        $referral_bonus = 0.00;
+        $referral_code = auth()->user()->referral_code ?? 'SAMUVE001';
+
+        return view('dashboard.index', compact(
+            'balance',
+            'profit',
+            'total_deposit',
+            'total_invest',
+            'total_withdraw',
+            'total_profit',
+            'referral_bonus',
+            'referral_code'
+        ));
+    }
+}
