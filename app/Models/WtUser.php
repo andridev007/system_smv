@@ -2,84 +2,61 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class WtUser extends Model
 {
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
+    use HasFactory;
+
     protected $table = 'wt_user';
 
-    /**
-     * The primary key associated with the table.
-     *
-     * @var string
-     */
     protected $primaryKey = 'id_user';
 
-    /**
-     * The "type" of the primary key ID.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
-
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
     public $timestamps = false;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'id_user',
+        'no_id',
         'username',
+        'nama_user',
+        'foto_user',
         'email',
-        'phone',
-        'full_name',
-        'referral_code',
-        'referred_by',
-        'balance',
-        'status',
-        'created_at',
-        'updated_at',
+        'hp',
+        'nama_bank',
+        'rek_bank',
+        'referral',
+        'id_user_referral',
+        'acc_status',
+        'status_suspend',
+        'wd_status',
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
+     * Get the user key associated with the user.
      */
-    protected $hidden = [
-        'password',
-    ];
+    public function userKey(): HasOne
+    {
+        return $this->hasOne(WtUserKey::class, 'id_user', 'id_user');
+    }
 
     /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
+     * Get the referrer user.
      */
-    protected $casts = [
-        'balance' => 'double',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-    ];
+    public function referrer(): BelongsTo
+    {
+        return $this->belongsTo(WtUser::class, 'id_user_referral', 'id_user');
+    }
+
+    /**
+     * Get the referred users.
+     */
+    public function referrals(): HasMany
+    {
+        return $this->hasMany(WtUser::class, 'id_user_referral', 'id_user');
+    }
 
     /**
      * Get the joins for the user.
@@ -90,19 +67,11 @@ class WtUser extends Model
     }
 
     /**
-     * Get the profit shares for the user.
+     * Get the cheques for the user.
      */
-    public function profitShares(): HasMany
+    public function cheques(): HasMany
     {
-        return $this->hasMany(WtProfitShare::class, 'id_user', 'id_user');
-    }
-
-    /**
-     * Get the referrals made by the user.
-     */
-    public function referrals(): HasMany
-    {
-        return $this->hasMany(WtReferral::class, 'id_user', 'id_user');
+        return $this->hasMany(WtCheque::class, 'id_user', 'id_user');
     }
 
     /**
@@ -111,5 +80,69 @@ class WtUser extends Model
     public function withdrawals(): HasMany
     {
         return $this->hasMany(WtWithdraw::class, 'id_user', 'id_user');
+    }
+
+    /**
+     * Get the referral bonuses received.
+     */
+    public function referralBonusesReceived(): HasMany
+    {
+        return $this->hasMany(WtReferral::class, 'untuk_user_referral', 'id_user');
+    }
+
+    /**
+     * Get the referral bonuses given.
+     */
+    public function referralBonusesGiven(): HasMany
+    {
+        return $this->hasMany(WtReferral::class, 'dari_user_referral', 'id_user');
+    }
+
+    /**
+     * Get the profit shares received.
+     */
+    public function profitSharesReceived(): HasMany
+    {
+        return $this->hasMany(WtProfitShare::class, 'untuk_user_profit', 'id_user');
+    }
+
+    /**
+     * Get the profit shares given.
+     */
+    public function profitSharesGiven(): HasMany
+    {
+        return $this->hasMany(WtProfitShare::class, 'dari_user_profit', 'id_user');
+    }
+
+    /**
+     * Get the manual profits for the user.
+     */
+    public function manualProfits(): HasMany
+    {
+        return $this->hasMany(WtProfitManual::class, 'id_user', 'id_user');
+    }
+
+    /**
+     * Get the mutuals for the user.
+     */
+    public function mutuals(): HasMany
+    {
+        return $this->hasMany(WtMutual::class, 'id_user', 'id_user');
+    }
+
+    /**
+     * Get the verification record for the user.
+     */
+    public function verify(): HasOne
+    {
+        return $this->hasOne(WtVerify::class, 'id_user', 'id_user');
+    }
+
+    /**
+     * Get the password reset records for the user.
+     */
+    public function passwordResets(): HasMany
+    {
+        return $this->hasMany(WtResetPass::class, 'id_user', 'id_user');
     }
 }

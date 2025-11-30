@@ -7,84 +7,47 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WtReferral extends Model
 {
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'wt_referral';
 
-    /**
-     * The primary key associated with the table.
-     *
-     * @var string
-     */
     protected $primaryKey = 'id_referral';
 
-    /**
-     * The "type" of the primary key ID.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
-
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
     public $timestamps = false;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'id_referral',
-        'id_user',
-        'id_referred_user',
-        'bonus_amount',
-        'commission_percentage',
-        'level',
-        'status',
-        'created_at',
-        'updated_at',
+        'id_join',
+        'dari_user_referral',
+        'untuk_user_referral',
+        'level_referral',
+        'persen_referral',
+        'nominal_referral',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
-        'bonus_amount' => 'double',
-        'commission_percentage' => 'double',
-        'level' => 'integer',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'persen_referral' => 'decimal:4',
+        'nominal_referral' => 'decimal:2',
     ];
 
     /**
-     * Get the user (referrer) that owns the referral.
+     * Get the join that owns the referral.
      */
-    public function user(): BelongsTo
+    public function join(): BelongsTo
     {
-        return $this->belongsTo(WtUser::class, 'id_user', 'id_user');
+        return $this->belongsTo(WtJoin::class, 'id_join', 'id_join');
     }
 
     /**
-     * Get the referred user.
+     * Get the user that gave the referral bonus.
      */
-    public function referredUser(): BelongsTo
+    public function fromUser(): BelongsTo
     {
-        return $this->belongsTo(WtUser::class, 'id_referred_user', 'id_user');
+        return $this->belongsTo(WtUser::class, 'dari_user_referral', 'id_user');
+    }
+
+    /**
+     * Get the user that received the referral bonus.
+     */
+    public function toUser(): BelongsTo
+    {
+        return $this->belongsTo(WtUser::class, 'untuk_user_referral', 'id_user');
     }
 }

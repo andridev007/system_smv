@@ -4,78 +4,33 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class WtWithdraw extends Model
 {
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'wt_withdraw';
 
-    /**
-     * The primary key associated with the table.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'id_withdraw';
+    protected $primaryKey = 'id_wd';
 
-    /**
-     * The "type" of the primary key ID.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
-
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
     public $timestamps = false;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'id_withdraw',
         'id_user',
-        'amount',
-        'fee',
-        'net_amount',
-        'bank_name',
-        'account_number',
-        'account_name',
-        'status',
-        'request_date',
-        'processed_date',
-        'created_at',
-        'updated_at',
+        'nominal_wd',
+        'wd_diterima',
+        'fee_wd',
+        'tgl_wd',
+        'status_wd',
+        'method',
+        'payment',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
-        'amount' => 'double',
-        'fee' => 'double',
-        'net_amount' => 'double',
-        'request_date' => 'datetime',
-        'processed_date' => 'datetime',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'tgl_wd' => 'datetime',
+        'nominal_wd' => 'decimal:2',
+        'wd_diterima' => 'decimal:2',
+        'fee_wd' => 'decimal:2',
     ];
 
     /**
@@ -84,5 +39,21 @@ class WtWithdraw extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(WtUser::class, 'id_user', 'id_user');
+    }
+
+    /**
+     * Get the withdrawal request for the withdrawal.
+     */
+    public function withdrawRequest(): HasOne
+    {
+        return $this->hasOne(WtWithdrawReq::class, 'id_wd', 'id_wd');
+    }
+
+    /**
+     * Get the withdraw joins for the withdrawal.
+     */
+    public function withdrawJoins(): HasMany
+    {
+        return $this->hasMany(WtWithdrawJoin::class, 'id_wd', 'id_wd');
     }
 }

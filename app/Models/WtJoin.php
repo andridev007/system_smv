@@ -5,73 +5,35 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class WtJoin extends Model
 {
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'wt_join';
 
-    /**
-     * The primary key associated with the table.
-     *
-     * @var string
-     */
     protected $primaryKey = 'id_join';
 
-    /**
-     * The "type" of the primary key ID.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
-
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
     public $timestamps = false;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'id_join',
         'id_user',
-        'amount',
-        'profit_percentage',
-        'status',
-        'join_date',
-        'end_date',
-        'created_at',
-        'updated_at',
+        'id_prog',
+        'nominal_join',
+        'insurance',
+        'kode_unik',
+        'total_bayar',
+        'tgl_join',
+        'status_join',
+        'method',
+        'note',
+        'wd_status',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
-        'amount' => 'double',
-        'profit_percentage' => 'double',
-        'join_date' => 'datetime',
-        'end_date' => 'datetime',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'tgl_join' => 'datetime',
+        'nominal_join' => 'decimal:2',
+        'insurance' => 'decimal:2',
+        'total_bayar' => 'decimal:2',
     ];
 
     /**
@@ -83,10 +45,58 @@ class WtJoin extends Model
     }
 
     /**
+     * Get the program associated with the join.
+     */
+    public function program(): BelongsTo
+    {
+        return $this->belongsTo(WtProgram::class, 'id_prog', 'id_prog');
+    }
+
+    /**
+     * Get the confirm record for the join.
+     */
+    public function confirm(): HasOne
+    {
+        return $this->hasOne(WtJoinConfirm::class, 'id_join', 'id_join');
+    }
+
+    /**
+     * Get the join programs for the join.
+     */
+    public function joinPrograms(): HasMany
+    {
+        return $this->hasMany(WtJoinProgram::class, 'id_join', 'id_join');
+    }
+
+    /**
+     * Get the referrals for the join.
+     */
+    public function referrals(): HasMany
+    {
+        return $this->hasMany(WtReferral::class, 'id_join', 'id_join');
+    }
+
+    /**
+     * Get the profit gets for the join.
+     */
+    public function profitGets(): HasMany
+    {
+        return $this->hasMany(WtProfitGet::class, 'id_join', 'id_join');
+    }
+
+    /**
      * Get the profit shares for the join.
      */
     public function profitShares(): HasMany
     {
         return $this->hasMany(WtProfitShare::class, 'id_join', 'id_join');
+    }
+
+    /**
+     * Get the withdraw joins for the join.
+     */
+    public function withdrawJoins(): HasMany
+    {
+        return $this->hasMany(WtWithdrawJoin::class, 'id_join', 'id_join');
     }
 }
