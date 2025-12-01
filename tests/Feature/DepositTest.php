@@ -8,12 +8,12 @@ use Tests\TestCase;
 class DepositTest extends TestCase
 {
     /**
-     * Test that deposit form submission requires authentication.
+     * Test that deposit submission requires authentication.
      */
     public function test_deposit_submission_requires_authentication(): void
     {
         $response = $this->post('/deposit', [
-            'amount' => 50000,
+            'amount' => 100,
             'payment_method' => 'bank_transfer',
         ]);
 
@@ -21,14 +21,13 @@ class DepositTest extends TestCase
     }
 
     /**
-     * Test that deposit form submission validates minimum amount.
+     * Test that deposit requires amount field.
      */
-    public function test_deposit_validates_minimum_amount(): void
+    public function test_deposit_requires_amount(): void
     {
         $user = User::factory()->make();
 
         $response = $this->actingAs($user)->post('/deposit', [
-            'amount' => 5000,
             'payment_method' => 'bank_transfer',
         ]);
 
@@ -36,14 +35,31 @@ class DepositTest extends TestCase
     }
 
     /**
-     * Test that deposit form submission validates required fields.
+     * Test that deposit requires payment method.
      */
-    public function test_deposit_validates_required_fields(): void
+    public function test_deposit_requires_payment_method(): void
     {
         $user = User::factory()->make();
 
-        $response = $this->actingAs($user)->post('/deposit', []);
+        $response = $this->actingAs($user)->post('/deposit', [
+            'amount' => 100,
+        ]);
 
-        $response->assertSessionHasErrors(['amount', 'payment_method']);
+        $response->assertSessionHasErrors('payment_method');
+    }
+
+    /**
+     * Test that deposit amount must be minimum 10.
+     */
+    public function test_deposit_amount_minimum_is_10(): void
+    {
+        $user = User::factory()->make();
+
+        $response = $this->actingAs($user)->post('/deposit', [
+            'amount' => 5,
+            'payment_method' => 'bank_transfer',
+        ]);
+
+        $response->assertSessionHasErrors('amount');
     }
 }

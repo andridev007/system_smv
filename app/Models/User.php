@@ -23,7 +23,6 @@ class User extends Authenticatable
         'password',
         'username',
         'phone',
-        'password',
         'referral_code',
         'upline_id',
         'bank_name',

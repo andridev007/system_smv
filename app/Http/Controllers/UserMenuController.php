@@ -16,19 +16,24 @@ class UserMenuController extends Controller
     }
 
     /**
-     * Handle the deposit form submission.
+     * Store a new deposit request.
      */
     public function storeDeposit(Request $request)
     {
         $request->validate([
-            'amount' => 'required|numeric|min:10000',
+            'amount' => 'required|numeric|min:10',
             'payment_method' => 'required|string',
         ]);
 
         $amount = $request->input('amount');
-        $uniqueCode = rand(1, 999);
+
+        // Generate random 3-digit unique code (100-999)
+        $uniqueCode = random_int(100, 999);
+
+        // Calculate total amount
         $amountTotal = $amount + $uniqueCode;
 
+        // Create deposit record
         $deposit = Deposit::create([
             'user_id' => auth()->id(),
             'amount' => $amount,
@@ -38,20 +43,12 @@ class UserMenuController extends Controller
             'status' => 'pending',
         ]);
 
-        return redirect()->route('user.deposit.confirmation', $deposit->id)
-            ->with('success', 'Deposit request created successfully.');
-    }
-
-    /**
-     * Display the deposit confirmation page.
-     */
-    public function depositConfirmation(Deposit $deposit)
-    {
-        if ($deposit->user_id !== auth()->id()) {
-            abort(403);
-        }
-
-        return view('user.deposit-confirmation', compact('deposit'));
+        return redirect()->route('user.deposit')->with([
+            'success' => 'Deposit request submitted successfully.',
+            'deposit' => $deposit,
+            'unique_code' => $uniqueCode,
+            'amount_total' => $amountTotal,
+        ]);
     }
 
     /**

@@ -14,18 +14,26 @@
         <h1 class="text-2xl font-bold">Deposit Funds</h1>
     </div>
 
+    @if(session('success'))
+    <!-- Success Message -->
+    <div class="bg-green-500/20 border border-green-500 rounded-xl p-4">
+        <div class="flex items-start gap-3">
+            <svg class="w-6 h-6 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+                <h3 class="font-medium text-green-400 mb-1">{{ session('success') }}</h3>
+                <p class="text-sm text-slate-300">
+                    Please transfer exactly <strong class="text-white">${{ number_format(session('amount_total'), 2) }}</strong> 
+                    (Amount + Unique Code: {{ session('unique_code') }})
+                </p>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Deposit Form Card -->
     <div class="bg-slate-800 rounded-2xl p-6">
-        @if ($errors->any())
-        <div class="mb-4 p-4 bg-red-500/20 border border-red-500 rounded-xl">
-            <ul class="text-red-400 text-sm list-disc list-inside">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-        @endif
-
         <form action="{{ route('user.deposit.store') }}" method="POST" class="space-y-6">
             @csrf
             

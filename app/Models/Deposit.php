@@ -22,10 +22,12 @@ class Deposit extends Model
         'amount_total',
         'payment_method',
         'status',
+        'gateway_id',
+        'json_response',
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
      * @return array<string, string>
      */
@@ -33,8 +35,8 @@ class Deposit extends Model
     {
         return [
             'amount' => 'decimal:2',
-            'amount_total' => 'decimal:2',
             'unique_code' => 'integer',
+            'amount_total' => 'decimal:2',
         ];
     }
 
