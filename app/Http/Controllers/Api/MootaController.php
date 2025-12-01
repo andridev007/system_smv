@@ -14,6 +14,22 @@ class MootaController extends Controller
      */
     public function handleCallback(Request $request): JsonResponse
     {
+        // Verify webhook signature
+        $signature = $request->header('X-Moota-Signature');
+        $secretKey = config('services.moota.webhook_secret');
+
+        if ($secretKey && $signature) {
+            $payload = $request->getContent();
+            $expectedSignature = hash_hmac('sha256', $payload, $secretKey);
+
+            if (!hash_equals($expectedSignature, $signature)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid signature',
+                ], 401);
+            }
+        }
+
         $amount = $request->input('amount');
 
         if (!$amount) {

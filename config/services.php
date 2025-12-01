@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'moota' => [
+        'webhook_secret' => env('MOOTA_WEBHOOK_SECRET'),
+    ],
+
 ];
