@@ -12,6 +12,7 @@ Route::get('/', function () {
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
 
@@ -26,10 +27,14 @@ Route::middleware('auth')->group(function () {
 });
 
 // Admin Routes (Protected)
-Route::middleware('auth')->prefix('admin')->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-    Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
-    Route::get('/deposits', [AdminController::class, 'deposits'])->name('admin.deposits');
-    Route::get('/withdrawals', [AdminController::class, 'withdrawals'])->name('admin.withdrawals');
-    Route::get('/settings', [AdminController::class, 'settings'])->name('admin.settings');
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::get('/deposits', [AdminController::class, 'deposits'])->name('deposits');
+    Route::patch('/deposits/{deposit}/approve', [AdminController::class, 'approveDeposit'])->name('deposits.approve');
+    Route::patch('/deposits/{deposit}/reject', [AdminController::class, 'rejectDeposit'])->name('deposits.reject');
+    Route::get('/withdrawals', [AdminController::class, 'withdrawals'])->name('withdrawals');
+    Route::patch('/withdrawals/{withdrawal}/approve', [AdminController::class, 'approveWithdrawal'])->name('withdrawals.approve');
+    Route::patch('/withdrawals/{withdrawal}/reject', [AdminController::class, 'rejectWithdrawal'])->name('withdrawals.reject');
+    Route::get('/settings', [AdminController::class, 'settings'])->name('settings');
 });

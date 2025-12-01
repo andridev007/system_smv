@@ -2,166 +2,177 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Investment;
 use App\Models\User;
-use Illuminate\Database\QueryException;
+use App\Models\Withdrawal;
 
 class AdminController extends Controller
 {
     /**
-     * Display the admin dashboard with summary stats.
+     * Display the admin dashboard with statistics.
      */
     public function index()
     {
-        // Get summary statistics
-        try {
-            $totalUsers = User::count();
-        } catch (QueryException $e) {
-            $totalUsers = 0;
-        }
-
-        // Mock data for pending deposits and withdrawals
-        // In a real application, these would come from actual Deposit and Withdrawal models
-        $pendingDeposits = 5;
-        $pendingWithdrawals = 3;
-
-        // Additional stats
-        $totalDeposits = 12;
-        $totalWithdrawals = 8;
-        $totalRevenue = 15000.00;
+        // Get statistics
+        $totalUsers = User::count();
+        
+        // Total approved deposits (investments with active status)
+        $totalDeposits = Investment::where('status', 'active')->sum('amount');
+        
+        // Pending deposits count
+        $pendingDeposits = Investment::where('status', 'pending')->count();
+        
+        // Total paid withdrawals
+        $totalWithdrawals = Withdrawal::where('status', 'approved')->sum('amount');
+        
+        // Pending withdrawals count
+        $pendingWithdrawals = Withdrawal::where('status', 'pending')->count();
+        
+        // Recent activity - combine recent deposits and withdrawals
+        $recentDeposits = Investment::with('user')
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(function ($deposit) {
+                return [
+                    'type' => 'deposit',
+                    'user' => $deposit->user->name ?? 'Unknown',
+                    'amount' => $deposit->amount,
+                    'status' => $deposit->status,
+                    'date' => $deposit->created_at ? $deposit->created_at->format('M j, Y H:i') : 'N/A',
+                    'timestamp' => $deposit->created_at,
+                ];
+            });
+            
+        $recentWithdrawals = Withdrawal::with('user')
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(function ($withdrawal) {
+                return [
+                    'type' => 'withdrawal',
+                    'user' => $withdrawal->user->name ?? 'Unknown',
+                    'amount' => $withdrawal->amount,
+                    'status' => $withdrawal->status,
+                    'date' => $withdrawal->created_at ? $withdrawal->created_at->format('M j, Y H:i') : 'N/A',
+                    'timestamp' => $withdrawal->created_at,
+                ];
+            });
+        
+        // Merge and sort by timestamp
+        $recentActivity = $recentDeposits->merge($recentWithdrawals)
+            ->sortByDesc('timestamp')
+            ->take(10)
+            ->values();
 
         return view('admin.dashboard', compact(
             'totalUsers',
-            'pendingDeposits',
-            'pendingWithdrawals',
             'totalDeposits',
+            'pendingDeposits',
             'totalWithdrawals',
-            'totalRevenue'
+            'pendingWithdrawals',
+            'recentActivity'
         ));
     }
 
     /**
-     * Display all users.
+     * Display the users management page.
      */
     public function users()
     {
-        try {
-            $users = User::all();
-        } catch (QueryException $e) {
-            $users = collect([]);
-        }
+        $users = User::latest()->paginate(15);
 
         return view('admin.users.index', compact('users'));
     }
 
     /**
-     * Display all deposits.
+     * Display the deposits management page.
      */
     public function deposits()
     {
-        // Mock deposit data
-        // In a real application, this would come from a Deposit model
-        $deposits = collect([
-            (object) [
-                'id' => 1,
-                'user_name' => 'John Doe',
-                'user_email' => 'john@example.com',
-                'amount' => 500.00,
-                'payment_method' => 'Bitcoin',
-                'status' => 'pending',
-                'created_at' => now()->subDays(1),
-            ],
-            (object) [
-                'id' => 2,
-                'user_name' => 'Jane Smith',
-                'user_email' => 'jane@example.com',
-                'amount' => 1000.00,
-                'payment_method' => 'Ethereum',
-                'status' => 'approved',
-                'created_at' => now()->subDays(2),
-            ],
-            (object) [
-                'id' => 3,
-                'user_name' => 'Bob Wilson',
-                'user_email' => 'bob@example.com',
-                'amount' => 250.00,
-                'payment_method' => 'Bitcoin',
-                'status' => 'rejected',
-                'created_at' => now()->subDays(3),
-            ],
-            (object) [
-                'id' => 4,
-                'user_name' => 'Alice Brown',
-                'user_email' => 'alice@example.com',
-                'amount' => 750.00,
-                'payment_method' => 'USDT',
-                'status' => 'pending',
-                'created_at' => now()->subHours(5),
-            ],
-            (object) [
-                'id' => 5,
-                'user_name' => 'Charlie Davis',
-                'user_email' => 'charlie@example.com',
-                'amount' => 2000.00,
-                'payment_method' => 'Bitcoin',
-                'status' => 'approved',
-                'created_at' => now()->subDays(5),
-            ],
-        ]);
+        $deposits = Investment::with('user')->latest()->paginate(15);
 
         return view('admin.deposits.index', compact('deposits'));
     }
 
     /**
-     * Display all withdrawals.
+     * Approve a deposit (investment).
+     */
+    public function approveDeposit(Investment $deposit)
+    {
+        if ($deposit->status !== 'pending') {
+            return back()->with('error', 'This deposit cannot be approved.');
+        }
+
+        $deposit->update([
+            'status' => 'active',
+            'active' => true,
+        ]);
+
+        return back()->with('success', 'Deposit approved successfully.');
+    }
+
+    /**
+     * Reject a deposit (investment).
+     */
+    public function rejectDeposit(Investment $deposit)
+    {
+        if ($deposit->status !== 'pending') {
+            return back()->with('error', 'This deposit cannot be rejected.');
+        }
+
+        $deposit->update([
+            'status' => 'rejected',
+            'active' => false,
+        ]);
+
+        return back()->with('success', 'Deposit rejected successfully.');
+    }
+
+    /**
+     * Display the withdrawals management page.
      */
     public function withdrawals()
     {
-        // Mock withdrawal data
-        // In a real application, this would come from a Withdrawal model
-        $withdrawals = collect([
-            (object) [
-                'id' => 1,
-                'user_name' => 'John Doe',
-                'user_email' => 'john@example.com',
-                'amount' => 200.00,
-                'wallet_address' => 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
-                'status' => 'pending',
-                'created_at' => now()->subHours(3),
-            ],
-            (object) [
-                'id' => 2,
-                'user_name' => 'Jane Smith',
-                'user_email' => 'jane@example.com',
-                'amount' => 500.00,
-                'wallet_address' => '0x742d35Cc6634C0532925a3b844Bc9e7595f...',
-                'status' => 'processed',
-                'created_at' => now()->subDays(1),
-            ],
-            (object) [
-                'id' => 3,
-                'user_name' => 'Bob Wilson',
-                'user_email' => 'bob@example.com',
-                'amount' => 350.00,
-                'wallet_address' => 'bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq',
-                'status' => 'pending',
-                'created_at' => now()->subHours(8),
-            ],
-            (object) [
-                'id' => 4,
-                'user_name' => 'Alice Brown',
-                'user_email' => 'alice@example.com',
-                'amount' => 1000.00,
-                'wallet_address' => 'TN2Y2Qvqp7VdZECULqe...',
-                'status' => 'processed',
-                'created_at' => now()->subDays(2),
-            ],
-        ]);
+        $withdrawals = Withdrawal::with('user')->latest()->paginate(15);
 
         return view('admin.withdrawals.index', compact('withdrawals'));
     }
 
     /**
-     * Display admin settings page.
+     * Approve a withdrawal.
+     */
+    public function approveWithdrawal(Withdrawal $withdrawal)
+    {
+        if ($withdrawal->status !== 'pending') {
+            return back()->with('error', 'This withdrawal cannot be approved.');
+        }
+
+        $withdrawal->update([
+            'status' => 'approved',
+        ]);
+
+        return back()->with('success', 'Withdrawal approved and marked as paid.');
+    }
+
+    /**
+     * Reject a withdrawal.
+     */
+    public function rejectWithdrawal(Withdrawal $withdrawal)
+    {
+        if ($withdrawal->status !== 'pending') {
+            return back()->with('error', 'This withdrawal cannot be rejected.');
+        }
+
+        $withdrawal->update([
+            'status' => 'rejected',
+        ]);
+
+        return back()->with('success', 'Withdrawal rejected successfully.');
+    }
+
+    /**
+     * Display the settings page.
      */
     public function settings()
     {

@@ -1,147 +1,198 @@
 @extends('layouts.admin')
 
-@section('title', 'Dashboard')
-@section('page-title', 'Admin Dashboard')
+@section('title', 'Admin Dashboard')
 
 @section('content')
 <div class="p-4 lg:p-6 space-y-6">
-    <!-- Summary Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Total Users Card -->
-        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-white">Dashboard Overview</h1>
+        <p class="text-sm text-slate-400">{{ now()->format('F j, Y') }}</p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <!-- Total Users -->
+        <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-5 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium opacity-90">Total Users</p>
-                    <p class="text-3xl font-bold mt-2">{{ $totalUsers }}</p>
+                    <p class="text-sm text-blue-100 opacity-80">Total Users</p>
+                    <p class="text-3xl font-bold text-white mt-2">{{ number_format($totalUsers) }}</p>
                 </div>
-                <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-12 h-12 bg-blue-500/30 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                     </svg>
                 </div>
             </div>
-            <a href="{{ route('admin.users') }}" class="inline-block mt-4 text-sm text-white/80 hover:text-white transition">
-                View all users →
-            </a>
         </div>
 
-        <!-- Pending Deposits Card -->
-        <div class="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-2xl p-6 text-white shadow-lg">
+        <!-- Total Deposits (Approved) -->
+        <div class="bg-gradient-to-br from-green-600 to-green-700 rounded-xl p-5 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium opacity-90">Pending Deposits</p>
-                    <p class="text-3xl font-bold mt-2">{{ $pendingDeposits }}</p>
+                    <p class="text-sm text-green-100 opacity-80">Total Deposits</p>
+                    <p class="text-3xl font-bold text-white mt-2">${{ number_format($totalDeposits, 2) }}</p>
+                    <p class="text-xs text-green-200 mt-1">Approved</p>
                 </div>
-                <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-12 h-12 bg-green-500/30 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
                 </div>
             </div>
-            <a href="{{ route('admin.deposits') }}" class="inline-block mt-4 text-sm text-white/80 hover:text-white transition">
-                Manage deposits →
-            </a>
         </div>
 
-        <!-- Pending Withdrawals Card -->
-        <div class="bg-gradient-to-r from-red-500 to-pink-500 rounded-2xl p-6 text-white shadow-lg">
+        <!-- Pending Deposits -->
+        <div class="bg-gradient-to-br from-yellow-600 to-yellow-700 rounded-xl p-5 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium opacity-90">Pending Withdrawals</p>
-                    <p class="text-3xl font-bold mt-2">{{ $pendingWithdrawals }}</p>
+                    <p class="text-sm text-yellow-100 opacity-80">Pending Deposits</p>
+                    <p class="text-3xl font-bold text-white mt-2">{{ number_format($pendingDeposits) }}</p>
+                    <p class="text-xs text-yellow-200 mt-1">Awaiting approval</p>
                 </div>
-                <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-12 h-12 bg-yellow-500/30 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Withdrawals (Paid) -->
+        <div class="bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl p-5 shadow-lg">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-purple-100 opacity-80">Total Withdrawals</p>
+                    <p class="text-3xl font-bold text-white mt-2">${{ number_format($totalWithdrawals, 2) }}</p>
+                    <p class="text-xs text-purple-200 mt-1">Paid</p>
+                </div>
+                <div class="w-12 h-12 bg-purple-500/30 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
                     </svg>
                 </div>
             </div>
-            <a href="{{ route('admin.withdrawals') }}" class="inline-block mt-4 text-sm text-white/80 hover:text-white transition">
-                Manage withdrawals →
-            </a>
-        </div>
-    </div>
-
-    <!-- Additional Stats Row -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Total Deposits -->
-        <div class="bg-indigo-900/30 border border-indigo-800 rounded-xl p-5">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
-                    </svg>
-                </div>
-                <div>
-                    <p class="text-sm text-indigo-300">Total Deposits</p>
-                    <p class="text-2xl font-bold text-white">{{ $totalDeposits }}</p>
-                </div>
-            </div>
         </div>
 
-        <!-- Total Withdrawals -->
-        <div class="bg-indigo-900/30 border border-indigo-800 rounded-xl p-5">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"></path>
-                    </svg>
-                </div>
+        <!-- Pending Withdrawals -->
+        <div class="bg-gradient-to-br from-red-600 to-red-700 rounded-xl p-5 shadow-lg">
+            <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-indigo-300">Total Withdrawals</p>
-                    <p class="text-2xl font-bold text-white">{{ $totalWithdrawals }}</p>
+                    <p class="text-sm text-red-100 opacity-80">Pending Withdrawals</p>
+                    <p class="text-3xl font-bold text-white mt-2">{{ number_format($pendingWithdrawals) }}</p>
+                    <p class="text-xs text-red-200 mt-1">Awaiting payment</p>
                 </div>
-            </div>
-        </div>
-
-        <!-- Total Revenue -->
-        <div class="bg-indigo-900/30 border border-indigo-800 rounded-xl p-5">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-indigo-500/20 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                <div class="w-12 h-12 bg-red-500/30 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                </div>
-                <div>
-                    <p class="text-sm text-indigo-300">Total Revenue</p>
-                    <p class="text-2xl font-bold text-white">${{ number_format($totalRevenue, 2) }}</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Quick Actions -->
-    <div class="bg-indigo-900/30 border border-indigo-800 rounded-xl p-6">
-        <h3 class="text-lg font-semibold text-white mb-4">Quick Actions</h3>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <a href="{{ route('admin.users') }}" class="flex flex-col items-center justify-center p-4 bg-indigo-800/50 hover:bg-indigo-700/50 rounded-lg transition">
-                <svg class="w-8 h-8 text-indigo-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <a href="{{ route('admin.users') }}" class="bg-slate-800 hover:bg-slate-700 rounded-xl p-5 transition flex items-center gap-4">
+            <div class="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                 </svg>
-                <span class="text-sm text-indigo-200">View Users</span>
-            </a>
+            </div>
+            <div>
+                <h3 class="text-white font-semibold">Manage Users</h3>
+                <p class="text-sm text-slate-400">View and manage all users</p>
+            </div>
+        </a>
 
-            <a href="{{ route('admin.deposits') }}" class="flex flex-col items-center justify-center p-4 bg-indigo-800/50 hover:bg-indigo-700/50 rounded-lg transition">
-                <svg class="w-8 h-8 text-yellow-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <a href="{{ route('admin.deposits') }}" class="bg-slate-800 hover:bg-slate-700 rounded-xl p-5 transition flex items-center gap-4">
+            <div class="w-12 h-12 bg-green-600/20 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
-                <span class="text-sm text-indigo-200">Review Deposits</span>
-            </a>
+            </div>
+            <div>
+                <h3 class="text-white font-semibold">Approve Deposits</h3>
+                <p class="text-sm text-slate-400">Review pending deposits</p>
+            </div>
+        </a>
 
-            <a href="{{ route('admin.withdrawals') }}" class="flex flex-col items-center justify-center p-4 bg-indigo-800/50 hover:bg-indigo-700/50 rounded-lg transition">
-                <svg class="w-8 h-8 text-red-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        <a href="{{ route('admin.withdrawals') }}" class="bg-slate-800 hover:bg-slate-700 rounded-xl p-5 transition flex items-center gap-4">
+            <div class="w-12 h-12 bg-orange-600/20 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
                 </svg>
-                <span class="text-sm text-indigo-200">Process Withdrawals</span>
-            </a>
+            </div>
+            <div>
+                <h3 class="text-white font-semibold">Process Withdrawals</h3>
+                <p class="text-sm text-slate-400">Review pending withdrawals</p>
+            </div>
+        </a>
+    </div>
 
-            <a href="{{ route('admin.settings') }}" class="flex flex-col items-center justify-center p-4 bg-indigo-800/50 hover:bg-indigo-700/50 rounded-lg transition">
-                <svg class="w-8 h-8 text-indigo-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
-                <span class="text-sm text-indigo-200">Settings</span>
-            </a>
+    <!-- Recent Activity Table -->
+    <div class="bg-slate-800 rounded-xl overflow-hidden">
+        <div class="p-5 border-b border-slate-700">
+            <h2 class="text-lg font-semibold text-white">Recent Activity</h2>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-slate-900/50">
+                    <tr>
+                        <th class="px-5 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Type</th>
+                        <th class="px-5 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">User</th>
+                        <th class="px-5 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Amount</th>
+                        <th class="px-5 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Status</th>
+                        <th class="px-5 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Date</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-700">
+                    @forelse($recentActivity as $activity)
+                    <tr class="hover:bg-slate-700/30 transition">
+                        <td class="px-5 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $activity['type'] === 'deposit' ? 'bg-green-600/20 text-green-400' : 'bg-orange-600/20 text-orange-400' }}">
+                                {{ ucfirst($activity['type']) }}
+                            </span>
+                        </td>
+                        <td class="px-5 py-4 whitespace-nowrap">
+                            <div class="text-sm text-white">{{ $activity['user'] }}</div>
+                        </td>
+                        <td class="px-5 py-4 whitespace-nowrap">
+                            <div class="text-sm text-white">${{ number_format($activity['amount'], 2) }}</div>
+                        </td>
+                        <td class="px-5 py-4 whitespace-nowrap">
+                            @php
+                                $statusColors = [
+                                    'pending' => 'bg-yellow-600/20 text-yellow-400',
+                                    'approved' => 'bg-green-600/20 text-green-400',
+                                    'active' => 'bg-green-600/20 text-green-400',
+                                    'rejected' => 'bg-red-600/20 text-red-400',
+                                ];
+                            @endphp
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusColors[$activity['status']] ?? 'bg-slate-600/20 text-slate-400' }}">
+                                {{ ucfirst($activity['status']) }}
+                            </span>
+                        </td>
+                        <td class="px-5 py-4 whitespace-nowrap text-sm text-slate-400">
+                            {{ $activity['date'] }}
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="px-5 py-10 text-center">
+                            <div class="text-slate-400">
+                                <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                </svg>
+                                <p class="text-sm">No recent activity</p>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
