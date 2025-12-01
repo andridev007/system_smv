@@ -16,7 +16,7 @@
 
     <!-- Deposit Form Card -->
     <div class="bg-slate-800 rounded-2xl p-6">
-        <form action="#" method="POST" class="space-y-6">
+        <form action="{{ route('user.deposit.store') }}" method="POST" class="space-y-6">
             @csrf
             
             <!-- Amount Input -->

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Deposit;
+use Illuminate\Http\Request;
+
 class UserMenuController extends Controller
 {
     /**
@@ -10,6 +13,52 @@ class UserMenuController extends Controller
     public function deposit()
     {
         return view('user.deposit');
+    }
+
+    /**
+     * Handle deposit submission.
+     */
+    public function storeDeposit(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:10',
+            'payment_method' => 'required|string|in:bitcoin,ethereum,usdt_trc20,bank_transfer',
+        ]);
+
+        $amount = $request->input('amount');
+        $maxAttempts = 10;
+        $deposit = null;
+
+        // Generate unique total_amount with retry logic to avoid collisions
+        for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
+            $uniqueCode = random_int(1, 9999);
+            $totalAmount = $amount + $uniqueCode;
+
+            // Check if this total_amount already exists for a pending deposit
+            $exists = Deposit::where('status', 'pending')
+                ->where('total_amount', $totalAmount)
+                ->exists();
+
+            if (! $exists) {
+                $deposit = Deposit::create([
+                    'user_id' => auth()->id(),
+                    'amount' => $amount,
+                    'unique_code' => $uniqueCode,
+                    'total_amount' => $totalAmount,
+                    'payment_method' => $request->input('payment_method'),
+                    'status' => 'pending',
+                ]);
+                break;
+            }
+        }
+
+        if (! $deposit) {
+            return back()->withErrors([
+                'amount' => 'Unable to generate a unique deposit code. Please try again.',
+            ]);
+        }
+
+        return view('user.deposit-confirmation', compact('deposit'));
     }
 
     /**
