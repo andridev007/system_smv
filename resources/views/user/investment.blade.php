@@ -1,175 +1,127 @@
 @extends('layouts.app')
 
-@section('title', 'Investment')
+@section('title', 'Investment Plans')
 
 @section('content')
 <div class="p-4 lg:p-6 space-y-6">
     <!-- Page Header -->
-    <div class="flex items-center gap-3">
-        <a href="{{ route('dashboard') }}" class="text-slate-400 hover:text-white transition">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="flex items-center gap-4">
+        <a href="{{ route('dashboard') }}" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
             </svg>
         </a>
-        <h1 class="text-xl font-bold text-white">Investment Packages</h1>
+        <div>
+            <h1 class="text-2xl font-bold">Investment Plans</h1>
+            <p class="text-sm text-slate-400">Choose a plan that suits your goals</p>
+        </div>
     </div>
 
-    <!-- Investment Info -->
-    <div class="bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl p-6 text-white">
-        <h2 class="text-lg font-semibold mb-2">Choose Your Investment Plan</h2>
-        <p class="text-purple-100 text-sm">Select a package that suits your investment goals. Higher investments offer better returns.</p>
-    </div>
-
-    <!-- Investment Packages Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        @foreach($packages as $package)
-        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 hover:border-purple-500 transition">
-            <!-- Package Header -->
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-xl font-bold text-white">{{ $package['name'] }}</h3>
-                <span class="px-3 py-1 bg-purple-500/20 text-purple-400 text-sm font-medium rounded-full">
-                    {{ $package['daily_profit'] }}% Daily
-                </span>
-            </div>
-
-            <!-- Package Details -->
-            <div class="space-y-3 mb-6">
-                <div class="flex justify-between">
-                    <span class="text-slate-400 text-sm">Min Investment</span>
-                    <span class="text-white font-medium">${{ number_format($package['min_amount']) }}</span>
+    <!-- Investment Plans Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        @foreach($plans ?? [] as $plan)
+        <div class="bg-slate-800 rounded-2xl overflow-hidden border border-slate-700 hover:border-purple-500/50 transition">
+            <!-- Plan Header -->
+            <div class="p-6 {{ $plan['type'] === 'daily' ? 'bg-gradient-to-r from-blue-600 to-cyan-600' : 'bg-gradient-to-r from-purple-600 to-pink-600' }}">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold text-white">{{ $plan['name'] }}</h3>
+                        <p class="text-sm text-white/80">{{ $plan['duration'] }}</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                        @if($plan['type'] === 'daily')
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        @else
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                        @endif
+                    </div>
                 </div>
-                <div class="flex justify-between">
-                    <span class="text-slate-400 text-sm">Max Investment</span>
-                    <span class="text-white font-medium">${{ number_format($package['max_amount']) }}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-slate-400 text-sm">Duration</span>
-                    <span class="text-white font-medium">{{ $package['duration_days'] }} Days</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-slate-400 text-sm">Total Return</span>
-                    <span class="text-green-400 font-bold">{{ $package['total_return'] }}%</span>
+                <div class="mt-4">
+                    <span class="text-4xl font-bold text-white">{{ $plan['roi_percentage'] }}%</span>
+                    <span class="text-white/80 text-sm">/ day</span>
                 </div>
             </div>
 
-            <!-- Progress Bar Visual -->
-            <div class="mb-6">
-                <div class="flex justify-between text-xs text-slate-400 mb-1">
-                    <span>ROI Progress</span>
-                    <span>{{ $package['total_return'] }}%</span>
+            <!-- Plan Details -->
+            <div class="p-6 space-y-4">
+                <p class="text-slate-400 text-sm">{{ $plan['description'] }}</p>
+                
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between py-2 border-b border-slate-700">
+                        <span class="text-slate-400 text-sm">Minimum Investment</span>
+                        <span class="text-white font-semibold">${{ number_format($plan['min_amount'], 2) }}</span>
+                    </div>
+                    <div class="flex items-center justify-between py-2 border-b border-slate-700">
+                        <span class="text-slate-400 text-sm">Maximum Investment</span>
+                        <span class="text-white font-semibold">${{ number_format($plan['max_amount'], 2) }}</span>
+                    </div>
+                    <div class="flex items-center justify-between py-2 border-b border-slate-700">
+                        <span class="text-slate-400 text-sm">Daily Return</span>
+                        <span class="text-green-400 font-semibold">{{ $plan['roi_percentage'] }}%</span>
+                    </div>
+                    <div class="flex items-center justify-between py-2">
+                        <span class="text-slate-400 text-sm">Duration</span>
+                        <span class="text-white font-semibold">{{ $plan['duration'] }}</span>
+                    </div>
                 </div>
-                <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full" style="width: {{ min($package['total_return'], 100) }}%"></div>
-                </div>
-            </div>
 
-            <!-- Invest Button -->
-            <button type="button" 
-                    onclick="openInvestModal('{{ $package['name'] }}', {{ $package['min_amount'] }}, {{ $package['max_amount'] }})"
-                    class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-xl transition">
-                Invest Now
-            </button>
+                <!-- Invest Button -->
+                <button 
+                    type="button"
+                    class="w-full {{ $plan['type'] === 'daily' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-purple-600 hover:bg-purple-700' }} text-white font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                    Invest Now
+                </button>
+            </div>
         </div>
         @endforeach
     </div>
 
-    <!-- Investment Terms -->
-    <div class="bg-slate-800 rounded-xl p-6">
-        <h3 class="text-lg font-semibold text-white mb-4">Investment Terms</h3>
-        <ul class="space-y-2 text-sm text-slate-400">
-            <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                <span>Daily profits are calculated based on your investment amount</span>
-            </li>
-            <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                <span>Profits are credited to your profit wallet automatically</span>
-            </li>
-            <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                <span>Principal is returned at the end of the investment period</span>
-            </li>
-            <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                <span>Multiple investments can be active simultaneously</span>
-            </li>
-        </ul>
-    </div>
-</div>
-
-<!-- Investment Modal -->
-<div id="investModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
-    <div class="bg-slate-800 rounded-xl p-6 w-full max-w-md">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-white" id="modalPlanName">Plan A</h3>
-            <button onclick="closeInvestModal()" class="text-slate-400 hover:text-white transition">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
-        
-        <form action="#" method="POST" class="space-y-4">
-            @csrf
-            <input type="hidden" name="plan" id="modalPlan">
-            
-            <div>
-                <label for="investAmount" class="block text-sm font-medium text-slate-300 mb-2">
-                    Investment Amount (USD)
-                </label>
-                <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">$</span>
-                    <input type="number" 
-                           name="amount" 
-                           id="investAmount" 
-                           step="1"
-                           placeholder="0"
-                           class="w-full bg-slate-700 text-white pl-8 pr-4 py-3 rounded-lg border border-slate-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none transition"
-                           required>
+    <!-- Features Section -->
+    <div class="bg-slate-800 rounded-2xl p-6">
+        <h3 class="text-lg font-semibold mb-4">Why Invest With Us?</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="flex items-start gap-3">
+                <div class="p-2 bg-green-500/20 rounded-lg">
+                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
                 </div>
-                <p class="mt-2 text-xs text-slate-400" id="modalAmountRange">Min: $100 - Max: $999</p>
+                <div>
+                    <h4 class="font-medium text-white">Secure Platform</h4>
+                    <p class="text-sm text-slate-400">Your investments are protected with advanced security</p>
+                </div>
             </div>
-
-            <button type="submit" 
-                    class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-xl transition">
-                Confirm Investment
-            </button>
-        </form>
+            <div class="flex items-start gap-3">
+                <div class="p-2 bg-blue-500/20 rounded-lg">
+                    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="font-medium text-white">Instant Processing</h4>
+                    <p class="text-sm text-slate-400">Quick deposit and withdrawal processing</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-3">
+                <div class="p-2 bg-purple-500/20 rounded-lg">
+                    <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="font-medium text-white">24/7 Support</h4>
+                    <p class="text-sm text-slate-400">Our team is always here to help you</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
-@push('scripts')
-<script>
-    function openInvestModal(planName, minAmount, maxAmount) {
-        document.getElementById('modalPlanName').textContent = planName;
-        document.getElementById('modalPlan').value = planName;
-        document.getElementById('investAmount').min = minAmount;
-        document.getElementById('investAmount').max = maxAmount;
-        document.getElementById('investAmount').placeholder = minAmount;
-        document.getElementById('modalAmountRange').textContent = `Min: $${minAmount.toLocaleString()} - Max: $${maxAmount.toLocaleString()}`;
-        document.getElementById('investModal').classList.remove('hidden');
-        document.getElementById('investModal').classList.add('flex');
-    }
-
-    function closeInvestModal() {
-        document.getElementById('investModal').classList.add('hidden');
-        document.getElementById('investModal').classList.remove('flex');
-    }
-
-    // Close modal when clicking outside
-    document.getElementById('investModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeInvestModal();
-        }
-    });
-</script>
-@endpush
 @endsection

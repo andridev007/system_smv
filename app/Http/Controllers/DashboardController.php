@@ -19,7 +19,7 @@ class DashboardController extends Controller
         $referral_bonus = 0.00;
         $referral_code = auth()->user()->referral_code ?? 'SAMUVE001';
 
-        // New specific fields as requested
+        // Additional stats as per user flow requirements
         $effective_balance = 0.00;
         $remaining_share_profit = 0.00;
         $share_profit_bonus = 0.00;

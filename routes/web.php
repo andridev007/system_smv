@@ -12,14 +12,14 @@ Route::get('/', function () {
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
 
-    // User Menu Routes
-    Route::get('/deposit', [UserMenuController::class, 'deposit'])->name('deposit');
-    Route::get('/investment', [UserMenuController::class, 'investment'])->name('investment');
-    Route::get('/withdraw', [UserMenuController::class, 'withdraw'])->name('withdraw');
-    Route::get('/transactions', [UserMenuController::class, 'transactions'])->name('transactions');
-    Route::get('/referral', [UserMenuController::class, 'referral'])->name('referral');
-    Route::get('/settings', [UserMenuController::class, 'settings'])->name('settings');
+// User Menu Routes (Protected)
+Route::middleware('auth')->group(function () {
+    Route::get('/deposit', [UserMenuController::class, 'deposit'])->name('user.deposit');
+    Route::get('/investment', [UserMenuController::class, 'investment'])->name('user.investment');
+    Route::get('/withdraw', [UserMenuController::class, 'withdraw'])->name('user.withdraw');
+    Route::get('/transactions', [UserMenuController::class, 'transactions'])->name('user.transactions');
+    Route::get('/referral', [UserMenuController::class, 'referral'])->name('user.referral');
+    Route::get('/settings', [UserMenuController::class, 'settings'])->name('user.settings');
 });

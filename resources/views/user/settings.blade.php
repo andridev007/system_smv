@@ -5,180 +5,248 @@
 @section('content')
 <div class="p-4 lg:p-6 space-y-6">
     <!-- Page Header -->
-    <div class="flex items-center gap-3">
-        <a href="{{ route('dashboard') }}" class="text-slate-400 hover:text-white transition">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="flex items-center gap-4">
+        <a href="{{ route('dashboard') }}" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
             </svg>
         </a>
-        <h1 class="text-xl font-bold text-white">Settings</h1>
-    </div>
-
-    <!-- Profile Avatar -->
-    <div class="bg-slate-800 rounded-xl p-6 text-center">
-        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mx-auto mb-4">
-            <span class="text-white text-3xl font-bold">{{ substr($user->name ?? 'U', 0, 1) }}</span>
+        <div>
+            <h1 class="text-2xl font-bold">Settings</h1>
+            <p class="text-sm text-slate-400">Manage your account settings</p>
         </div>
-        <h2 class="text-xl font-semibold text-white">{{ $user->name ?? 'User' }}</h2>
-        <p class="text-slate-400 text-sm">{{ $user->email ?? 'user@example.com' }}</p>
     </div>
 
-    <!-- Profile Information Form -->
-    <div class="bg-slate-800 rounded-xl p-6">
-        <h3 class="text-lg font-semibold text-white mb-4">Profile Information</h3>
-        <form action="#" method="POST" class="space-y-4">
+    <!-- Profile Section -->
+    <div class="bg-slate-800 rounded-2xl p-6">
+        <h3 class="text-lg font-semibold mb-6">Profile Information</h3>
+        
+        <form action="#" method="POST" class="space-y-6">
             @csrf
             @method('PUT')
-            
-            <div>
-                <label for="name" class="block text-sm font-medium text-slate-300 mb-2">Full Name</label>
-                <input type="text" 
-                       name="name" 
-                       id="name" 
-                       value="{{ $user->name ?? '' }}"
-                       class="w-full bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition"
-                       required>
+
+            <!-- Profile Picture -->
+            <div class="flex items-center gap-4">
+                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                    <span class="text-2xl font-semibold text-white">{{ substr($user->name ?? 'U', 0, 1) }}</span>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-400 mb-2">Profile Photo</p>
+                    <button type="button" class="text-sm text-purple-400 hover:text-purple-300 transition">
+                        Change Photo
+                    </button>
+                </div>
             </div>
 
-            <div>
-                <label for="email" class="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
-                <input type="email" 
-                       name="email" 
-                       id="email" 
-                       value="{{ $user->email ?? '' }}"
-                       class="w-full bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition"
-                       disabled>
-                <p class="mt-1 text-xs text-slate-400">Email cannot be changed</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Full Name -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-slate-300 mb-2">
+                        Full Name
+                    </label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        value="{{ $user->name ?? '' }}"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    >
+                </div>
+
+                <!-- Username -->
+                <div>
+                    <label for="username" class="block text-sm font-medium text-slate-300 mb-2">
+                        Username
+                    </label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        value="{{ $user->username ?? '' }}"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    >
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-slate-300 mb-2">
+                        Email Address
+                    </label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        value="{{ $user->email ?? '' }}"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    >
+                </div>
+
+                <!-- Phone -->
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-slate-300 mb-2">
+                        Phone Number
+                    </label>
+                    <input 
+                        type="tel" 
+                        id="phone" 
+                        name="phone" 
+                        value="{{ $user->phone ?? '' }}"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    >
+                </div>
             </div>
 
-            <div>
-                <label for="phone" class="block text-sm font-medium text-slate-300 mb-2">Phone Number</label>
-                <input type="tel" 
-                       name="phone" 
-                       id="phone" 
-                       value="{{ $user->phone ?? '' }}"
-                       placeholder="+62 xxx xxxx xxxx"
-                       class="w-full bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition">
+            <!-- Save Button -->
+            <div class="pt-4">
+                <button 
+                    type="submit" 
+                    class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-3 rounded-xl transition"
+                >
+                    Save Changes
+                </button>
             </div>
-
-            <div>
-                <label for="username" class="block text-sm font-medium text-slate-300 mb-2">Username</label>
-                <input type="text" 
-                       name="username" 
-                       id="username" 
-                       value="{{ $user->username ?? '' }}"
-                       class="w-full bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition"
-                       disabled>
-                <p class="mt-1 text-xs text-slate-400">Username cannot be changed</p>
-            </div>
-
-            <button type="submit" 
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition">
-                Update Profile
-            </button>
         </form>
     </div>
 
-    <!-- Bank Information -->
-    <div class="bg-slate-800 rounded-xl p-6">
-        <h3 class="text-lg font-semibold text-white mb-4">Bank Information</h3>
-        <form action="#" method="POST" class="space-y-4">
+    <!-- Change Password Section -->
+    <div class="bg-slate-800 rounded-2xl p-6">
+        <h3 class="text-lg font-semibold mb-6">Change Password</h3>
+        
+        <form action="#" method="POST" class="space-y-6">
             @csrf
             @method('PUT')
-            
-            <div>
-                <label for="bank_name" class="block text-sm font-medium text-slate-300 mb-2">Bank Name</label>
-                <input type="text" 
-                       name="bank_name" 
-                       id="bank_name" 
-                       value="{{ $user->bank_name ?? '' }}"
-                       placeholder="e.g., BCA, Mandiri, BRI"
-                       class="w-full bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Current Password -->
+                <div class="md:col-span-2">
+                    <label for="current_password" class="block text-sm font-medium text-slate-300 mb-2">
+                        Current Password
+                    </label>
+                    <input 
+                        type="password" 
+                        id="current_password" 
+                        name="current_password" 
+                        placeholder="Enter current password"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    >
+                </div>
+
+                <!-- New Password -->
+                <div>
+                    <label for="new_password" class="block text-sm font-medium text-slate-300 mb-2">
+                        New Password
+                    </label>
+                    <input 
+                        type="password" 
+                        id="new_password" 
+                        name="new_password" 
+                        placeholder="Enter new password"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    >
+                </div>
+
+                <!-- Confirm New Password -->
+                <div>
+                    <label for="new_password_confirmation" class="block text-sm font-medium text-slate-300 mb-2">
+                        Confirm New Password
+                    </label>
+                    <input 
+                        type="password" 
+                        id="new_password_confirmation" 
+                        name="new_password_confirmation" 
+                        placeholder="Confirm new password"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    >
+                </div>
             </div>
 
-            <div>
-                <label for="account_number" class="block text-sm font-medium text-slate-300 mb-2">Account Number</label>
-                <input type="text" 
-                       name="account_number" 
-                       id="account_number" 
-                       value="{{ $user->account_number ?? '' }}"
-                       placeholder="Enter your bank account number"
-                       class="w-full bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition">
+            <!-- Update Password Button -->
+            <div class="pt-4">
+                <button 
+                    type="submit" 
+                    class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-3 rounded-xl transition"
+                >
+                    Update Password
+                </button>
             </div>
-
-            <div>
-                <label for="account_holder" class="block text-sm font-medium text-slate-300 mb-2">Account Holder Name</label>
-                <input type="text" 
-                       name="account_holder" 
-                       id="account_holder" 
-                       value="{{ $user->account_holder ?? '' }}"
-                       placeholder="Enter the account holder name"
-                       class="w-full bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition">
-            </div>
-
-            <button type="submit" 
-                    class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition">
-                Update Bank Information
-            </button>
         </form>
     </div>
 
-    <!-- Change Password Form -->
-    <div class="bg-slate-800 rounded-xl p-6">
-        <h3 class="text-lg font-semibold text-white mb-4">Change Password</h3>
-        <form action="#" method="POST" class="space-y-4">
+    <!-- Wallet Addresses Section -->
+    <div class="bg-slate-800 rounded-2xl p-6">
+        <h3 class="text-lg font-semibold mb-6">Withdrawal Addresses</h3>
+        <p class="text-sm text-slate-400 mb-6">Save your wallet addresses for faster withdrawals</p>
+        
+        <form action="#" method="POST" class="space-y-6">
             @csrf
             @method('PUT')
-            
+
+            <!-- Bitcoin Address -->
             <div>
-                <label for="current_password" class="block text-sm font-medium text-slate-300 mb-2">Current Password</label>
-                <input type="password" 
-                       name="current_password" 
-                       id="current_password" 
-                       placeholder="Enter your current password"
-                       class="w-full bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition"
-                       required>
+                <label for="btc_address" class="block text-sm font-medium text-slate-300 mb-2">
+                    Bitcoin (BTC) Address
+                </label>
+                <input 
+                    type="text" 
+                    id="btc_address" 
+                    name="btc_address" 
+                    placeholder="Enter your BTC wallet address"
+                    class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent font-mono text-sm"
+                >
             </div>
 
+            <!-- USDT TRC20 Address -->
             <div>
-                <label for="new_password" class="block text-sm font-medium text-slate-300 mb-2">New Password</label>
-                <input type="password" 
-                       name="new_password" 
-                       id="new_password" 
-                       placeholder="Enter your new password"
-                       class="w-full bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition"
-                       required>
+                <label for="usdt_address" class="block text-sm font-medium text-slate-300 mb-2">
+                    USDT (TRC20) Address
+                </label>
+                <input 
+                    type="text" 
+                    id="usdt_address" 
+                    name="usdt_address" 
+                    placeholder="Enter your USDT TRC20 wallet address"
+                    class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-mono text-sm"
+                >
             </div>
 
+            <!-- Bank Details -->
             <div>
-                <label for="confirm_password" class="block text-sm font-medium text-slate-300 mb-2">Confirm New Password</label>
-                <input type="password" 
-                       name="confirm_password" 
-                       id="confirm_password" 
-                       placeholder="Confirm your new password"
-                       class="w-full bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition"
-                       required>
+                <label for="bank_details" class="block text-sm font-medium text-slate-300 mb-2">
+                    Bank Account Details
+                </label>
+                <textarea 
+                    id="bank_details" 
+                    name="bank_details" 
+                    rows="3"
+                    placeholder="Enter your bank account details (Bank Name, Account Number, Account Name)"
+                    class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                ></textarea>
             </div>
 
-            <button type="submit" 
-                    class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-xl transition">
-                Change Password
-            </button>
+            <!-- Save Addresses Button -->
+            <div class="pt-4">
+                <button 
+                    type="submit" 
+                    class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-3 rounded-xl transition"
+                >
+                    Save Addresses
+                </button>
+            </div>
         </form>
     </div>
 
-    <!-- Logout -->
-    <div class="bg-slate-800 rounded-xl p-6">
-        <form action="#" method="POST">
-            @csrf
-            <button type="submit" 
-                    class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                </svg>
-                <span>Logout</span>
-            </button>
-        </form>
+    <!-- Danger Zone -->
+    <div class="bg-slate-800 rounded-2xl p-6 border border-red-500/30">
+        <h3 class="text-lg font-semibold text-red-400 mb-2">Danger Zone</h3>
+        <p class="text-sm text-slate-400 mb-4">
+            Once you delete your account, there is no going back. Please be certain.
+        </p>
+        <button 
+            type="button" 
+            class="bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-500/50 font-medium px-4 py-2 rounded-xl transition"
+        >
+            Delete Account
+        </button>
     </div>
 </div>
 @endsection

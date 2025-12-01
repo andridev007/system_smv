@@ -13,47 +13,33 @@ class UserMenuController extends Controller
     }
 
     /**
-     * Display the investment page.
+     * Display the investment plans page.
      */
     public function investment()
     {
-        // Dummy investment packages
-        $packages = [
+        // Dummy investment plans data
+        $plans = [
             [
-                'name' => 'Plan A',
-                'min_amount' => 100,
+                'name' => 'Daily Plan',
+                'type' => 'daily',
+                'min_amount' => 50,
                 'max_amount' => 999,
-                'daily_profit' => 2.5,
-                'duration_days' => 30,
-                'total_return' => 75,
+                'roi_percentage' => 2.5,
+                'duration' => '30 Days',
+                'description' => 'Earn daily returns with our basic investment plan.',
             ],
             [
-                'name' => 'Plan B',
+                'name' => 'Dream Plan',
+                'type' => 'dream',
                 'min_amount' => 1000,
-                'max_amount' => 4999,
-                'daily_profit' => 3.0,
-                'duration_days' => 30,
-                'total_return' => 90,
-            ],
-            [
-                'name' => 'Plan C',
-                'min_amount' => 5000,
-                'max_amount' => 9999,
-                'daily_profit' => 3.5,
-                'duration_days' => 30,
-                'total_return' => 105,
-            ],
-            [
-                'name' => 'Plan D',
-                'min_amount' => 10000,
                 'max_amount' => 50000,
-                'daily_profit' => 4.0,
-                'duration_days' => 30,
-                'total_return' => 120,
+                'roi_percentage' => 5,
+                'duration' => '90 Days',
+                'description' => 'Higher returns for serious investors.',
             ],
         ];
 
-        return view('user.investment', compact('packages'));
+        return view('user.investment', compact('plans'));
     }
 
     /**
@@ -61,6 +47,7 @@ class UserMenuController extends Controller
      */
     public function withdraw()
     {
+        // Dummy data for available balance
         $available_balance = 0.00;
 
         return view('user.withdraw', compact('available_balance'));
@@ -82,22 +69,17 @@ class UserMenuController extends Controller
      */
     public function referral()
     {
-        $user = auth()->user();
-        $referral_code = $user->referral_code ?? 'SAMUVE001';
-        $referral_url = url('/register?ref='.$referral_code);
-        $total_referrals = 0;
-        $downlines = [];
+        $referral_code = auth()->user()->referral_code ?? 'SAMUVE001';
+        $referral_link = url('/register?ref='.$referral_code);
 
-        return view('user.referral', compact(
-            'referral_code',
-            'referral_url',
-            'total_referrals',
-            'downlines'
-        ));
+        // Dummy referrals data
+        $referrals = [];
+
+        return view('user.referral', compact('referral_code', 'referral_link', 'referrals'));
     }
 
     /**
-     * Display the settings/profile page.
+     * Display the settings page.
      */
     public function settings()
     {

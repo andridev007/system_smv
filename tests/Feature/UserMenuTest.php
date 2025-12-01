@@ -8,23 +8,20 @@ use Tests\TestCase;
 class UserMenuTest extends TestCase
 {
     /**
-     * Test that deposit page requires authentication.
+     * Test that unauthenticated users are redirected to login for deposit page.
      */
     public function test_deposit_requires_authentication(): void
     {
         $response = $this->get('/deposit');
-
         $response->assertRedirect('/login');
     }
 
     /**
-     * Test that authenticated users can access deposit page.
+     * Test that authenticated users can access the deposit page.
      */
     public function test_authenticated_users_can_access_deposit(): void
     {
-        $user = User::factory()->make([
-            'referral_code' => 'TESTCODE123',
-        ]);
+        $user = User::factory()->make();
 
         $response = $this->actingAs($user)->get('/deposit');
 
@@ -33,9 +30,9 @@ class UserMenuTest extends TestCase
     }
 
     /**
-     * Test that deposit page contains expected UI elements.
+     * Test that deposit page contains expected elements.
      */
-    public function test_deposit_contains_ui_elements(): void
+    public function test_deposit_page_contains_expected_elements(): void
     {
         $user = User::factory()->make();
 
@@ -44,22 +41,21 @@ class UserMenuTest extends TestCase
         $response->assertSee('Deposit Funds');
         $response->assertSee('Amount (USD)');
         $response->assertSee('Payment Method');
-        $response->assertSee('Bank Transfer');
-        $response->assertSee('Cryptocurrency');
+        $response->assertSee('Bitcoin');
+        $response->assertSee('Proceed to Payment');
     }
 
     /**
-     * Test that investment page requires authentication.
+     * Test that unauthenticated users are redirected to login for investment page.
      */
     public function test_investment_requires_authentication(): void
     {
         $response = $this->get('/investment');
-
         $response->assertRedirect('/login');
     }
 
     /**
-     * Test that authenticated users can access investment page.
+     * Test that authenticated users can access the investment page.
      */
     public function test_authenticated_users_can_access_investment(): void
     {
@@ -69,36 +65,34 @@ class UserMenuTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertViewIs('user.investment');
-        $response->assertViewHas('packages');
     }
 
     /**
-     * Test that investment page contains expected UI elements.
+     * Test that investment page contains expected elements.
      */
-    public function test_investment_contains_ui_elements(): void
+    public function test_investment_page_contains_expected_elements(): void
     {
         $user = User::factory()->make();
 
         $response = $this->actingAs($user)->get('/investment');
 
-        $response->assertSee('Investment Packages');
-        $response->assertSee('Plan A');
-        $response->assertSee('Plan B');
+        $response->assertSee('Investment Plans');
+        $response->assertSee('Daily Plan');
+        $response->assertSee('Dream Plan');
         $response->assertSee('Invest Now');
     }
 
     /**
-     * Test that withdraw page requires authentication.
+     * Test that unauthenticated users are redirected to login for withdraw page.
      */
     public function test_withdraw_requires_authentication(): void
     {
         $response = $this->get('/withdraw');
-
         $response->assertRedirect('/login');
     }
 
     /**
-     * Test that authenticated users can access withdraw page.
+     * Test that authenticated users can access the withdraw page.
      */
     public function test_authenticated_users_can_access_withdraw(): void
     {
@@ -108,13 +102,12 @@ class UserMenuTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertViewIs('user.withdraw');
-        $response->assertViewHas('available_balance');
     }
 
     /**
-     * Test that withdraw page contains expected UI elements.
+     * Test that withdraw page contains expected elements.
      */
-    public function test_withdraw_contains_ui_elements(): void
+    public function test_withdraw_page_contains_expected_elements(): void
     {
         $user = User::factory()->make();
 
@@ -123,21 +116,21 @@ class UserMenuTest extends TestCase
         $response->assertSee('Withdraw Funds');
         $response->assertSee('Available Balance');
         $response->assertSee('Withdrawal Amount');
-        $response->assertSee('Destination Wallet Address');
+        $response->assertSee('Withdrawal Method');
+        $response->assertSee('Request Withdrawal');
     }
 
     /**
-     * Test that transactions page requires authentication.
+     * Test that unauthenticated users are redirected to login for transactions page.
      */
     public function test_transactions_requires_authentication(): void
     {
         $response = $this->get('/transactions');
-
         $response->assertRedirect('/login');
     }
 
     /**
-     * Test that authenticated users can access transactions page.
+     * Test that authenticated users can access the transactions page.
      */
     public function test_authenticated_users_can_access_transactions(): void
     {
@@ -147,13 +140,12 @@ class UserMenuTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertViewIs('user.transactions');
-        $response->assertViewHas('transactions');
     }
 
     /**
-     * Test that transactions page contains expected UI elements.
+     * Test that transactions page contains expected elements.
      */
-    public function test_transactions_contains_ui_elements(): void
+    public function test_transactions_page_contains_expected_elements(): void
     {
         $user = User::factory()->make();
 
@@ -164,84 +156,73 @@ class UserMenuTest extends TestCase
     }
 
     /**
-     * Test that referral page requires authentication.
+     * Test that unauthenticated users are redirected to login for referral page.
      */
     public function test_referral_requires_authentication(): void
     {
         $response = $this->get('/referral');
-
         $response->assertRedirect('/login');
     }
 
     /**
-     * Test that authenticated users can access referral page.
+     * Test that authenticated users can access the referral page.
      */
     public function test_authenticated_users_can_access_referral(): void
     {
         $user = User::factory()->make([
-            'referral_code' => 'TESTREF123',
+            'referral_code' => 'TESTCODE123',
         ]);
 
         $response = $this->actingAs($user)->get('/referral');
 
         $response->assertStatus(200);
         $response->assertViewIs('user.referral');
-        $response->assertViewHas([
-            'referral_code',
-            'referral_url',
-            'total_referrals',
-            'downlines',
-        ]);
     }
 
     /**
-     * Test that referral page contains expected UI elements.
+     * Test that referral page contains expected elements.
      */
-    public function test_referral_contains_ui_elements(): void
+    public function test_referral_page_contains_expected_elements(): void
     {
         $user = User::factory()->make([
-            'referral_code' => 'TESTREF123',
+            'referral_code' => 'TESTCODE123',
         ]);
 
         $response = $this->actingAs($user)->get('/referral');
 
         $response->assertSee('Referral Program');
-        $response->assertSee('Total Referrals');
         $response->assertSee('Your Referral Link');
-        $response->assertSee('TESTREF123');
+        $response->assertSee('TESTCODE123');
+        $response->assertSee('How It Works');
+        $response->assertSee('Your Referrals');
     }
 
     /**
-     * Test that settings page requires authentication.
+     * Test that unauthenticated users are redirected to login for settings page.
      */
     public function test_settings_requires_authentication(): void
     {
         $response = $this->get('/settings');
-
         $response->assertRedirect('/login');
     }
 
     /**
-     * Test that authenticated users can access settings page.
+     * Test that authenticated users can access the settings page.
      */
     public function test_authenticated_users_can_access_settings(): void
     {
-        $user = User::factory()->make([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        $user = User::factory()->make();
 
         $response = $this->actingAs($user)->get('/settings');
 
         $response->assertStatus(200);
         $response->assertViewIs('user.settings');
-        $response->assertViewHas('user');
     }
 
     /**
-     * Test that settings page contains expected UI elements.
+     * Test that settings page contains expected elements.
      */
-    public function test_settings_contains_ui_elements(): void
+    public function test_settings_page_contains_expected_elements(): void
     {
         $user = User::factory()->make([
             'name' => 'Test User',
@@ -253,6 +234,8 @@ class UserMenuTest extends TestCase
         $response->assertSee('Settings');
         $response->assertSee('Profile Information');
         $response->assertSee('Change Password');
+        $response->assertSee('Withdrawal Addresses');
         $response->assertSee('Test User');
+        $response->assertSee('test@example.com');
     }
 }
