@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Deposit;
+use Illuminate\Http\Request;
+
 class UserMenuController extends Controller
 {
     /**
@@ -10,6 +13,45 @@ class UserMenuController extends Controller
     public function deposit()
     {
         return view('user.deposit');
+    }
+
+    /**
+     * Handle the deposit form submission.
+     */
+    public function storeDeposit(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:10000',
+            'payment_method' => 'required|string',
+        ]);
+
+        $amount = $request->input('amount');
+        $uniqueCode = rand(1, 999);
+        $amountTotal = $amount + $uniqueCode;
+
+        $deposit = Deposit::create([
+            'user_id' => auth()->id(),
+            'amount' => $amount,
+            'unique_code' => $uniqueCode,
+            'amount_total' => $amountTotal,
+            'payment_method' => $request->input('payment_method'),
+            'status' => 'pending',
+        ]);
+
+        return redirect()->route('user.deposit.confirmation', $deposit->id)
+            ->with('success', 'Deposit request created successfully.');
+    }
+
+    /**
+     * Display the deposit confirmation page.
+     */
+    public function depositConfirmation(Deposit $deposit)
+    {
+        if ($deposit->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return view('user.deposit-confirmation', compact('deposit'));
     }
 
     /**

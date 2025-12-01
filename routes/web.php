@@ -19,6 +19,8 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('aut
 // User Menu Routes (Protected)
 Route::middleware('auth')->group(function () {
     Route::get('/deposit', [UserMenuController::class, 'deposit'])->name('user.deposit');
+    Route::post('/deposit', [UserMenuController::class, 'storeDeposit'])->name('user.deposit.store');
+    Route::get('/deposit/{deposit}/confirmation', [UserMenuController::class, 'depositConfirmation'])->name('user.deposit.confirmation');
     Route::get('/investment', [UserMenuController::class, 'investment'])->name('user.investment');
     Route::get('/withdraw', [UserMenuController::class, 'withdraw'])->name('user.withdraw');
     Route::get('/transactions', [UserMenuController::class, 'transactions'])->name('user.transactions');
