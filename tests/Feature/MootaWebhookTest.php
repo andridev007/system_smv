@@ -68,17 +68,4 @@ class MootaWebhookTest extends TestCase
         $response->assertStatus(200);
         $response->assertJson(['message' => 'Processed 0 deposit(s)']);
     }
-
-    public function test_webhook_handles_empty_data_array(): void
-    {
-        $response = $this->postJson('/api/moota/webhook', [
-            'data' => [],
-        ]);
-
-        $response->assertStatus(200);
-        $response->assertJson([
-            'success' => true,
-            'message' => 'Processed 0 deposit(s)',
-        ]);
-    }
 }

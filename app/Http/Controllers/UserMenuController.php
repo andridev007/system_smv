@@ -31,7 +31,7 @@ class UserMenuController extends Controller
 
         // Generate unique total_amount with retry logic to avoid collisions
         for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
-            $uniqueCode = random_int(1, 999);
+            $uniqueCode = random_int(1, 9999);
             $totalAmount = $amount + $uniqueCode;
 
             // Check if this total_amount already exists for a pending deposit
