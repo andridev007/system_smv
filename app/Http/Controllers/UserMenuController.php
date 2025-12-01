@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Deposit;
+use Illuminate\Http\Request;
+
 class UserMenuController extends Controller
 {
     /**
@@ -10,6 +13,42 @@ class UserMenuController extends Controller
     public function deposit()
     {
         return view('user.deposit');
+    }
+
+    /**
+     * Store a new deposit request.
+     */
+    public function storeDeposit(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:10',
+            'payment_method' => 'required|string',
+        ]);
+
+        $amount = $request->input('amount');
+
+        // Generate random 3-digit unique code (100-999)
+        $uniqueCode = random_int(100, 999);
+
+        // Calculate total amount
+        $amountTotal = $amount + $uniqueCode;
+
+        // Create deposit record
+        $deposit = Deposit::create([
+            'user_id' => auth()->id(),
+            'amount' => $amount,
+            'unique_code' => $uniqueCode,
+            'amount_total' => $amountTotal,
+            'payment_method' => $request->input('payment_method'),
+            'status' => 'pending',
+        ]);
+
+        return redirect()->route('user.deposit')->with([
+            'success' => 'Deposit request submitted successfully.',
+            'deposit' => $deposit,
+            'unique_code' => $uniqueCode,
+            'amount_total' => $amountTotal,
+        ]);
     }
 
     /**
