@@ -171,7 +171,7 @@
     <div class="bg-slate-800 rounded-xl p-4">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-semibold">Recent Transactions</h3>
-            <a href="{{ route('transactions') }}" class="text-blue-400 text-sm hover:text-blue-300 transition">View All</a>
+            <a href="{{ route('user.transactions') }}" class="text-blue-400 text-sm hover:text-blue-300 transition">View All</a>
         </div>
         
         <div class="space-y-3">
