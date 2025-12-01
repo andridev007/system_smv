@@ -77,11 +77,11 @@ class DashboardTest extends TestCase
         $response->assertSee('Deposit');
         $response->assertSee('Investment');
         $response->assertSee('Withdraw');
-        $response->assertSee('Total Deposit');
-        $response->assertSee('Total Investment');
-        $response->assertSee('Total Withdraw');
-        $response->assertSee('Total Profit');
+        $response->assertSee('Effective Balance');
+        $response->assertSee('Remaining Share Profit');
         $response->assertSee('Referral Bonus');
+        $response->assertSee('Share Profit Bonus');
+        $response->assertSee('Remaining Bonus');
         $response->assertSee('Recent Transactions');
     }
 
@@ -96,7 +96,7 @@ class DashboardTest extends TestCase
 
         $response = $this->actingAs($user)->get('/dashboard');
 
-        $response->assertSee('Your Referral Link');
+        $response->assertSee('Referral Link');
         $response->assertSee('TESTCODE123');
     }
 }
