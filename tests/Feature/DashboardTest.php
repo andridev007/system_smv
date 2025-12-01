@@ -79,9 +79,9 @@ class DashboardTest extends TestCase
         $response->assertSee('Withdraw');
         $response->assertSee('Effective Balance');
         $response->assertSee('Remaining Share Profit');
+        $response->assertSee('Referral Bonus');
         $response->assertSee('Share Profit Bonus');
         $response->assertSee('Remaining Bonus');
-        $response->assertSee('Referral Bonus');
         $response->assertSee('Recent Transactions');
     }
 
