@@ -9,7 +9,7 @@
     <div class="flex items-center justify-between">
         <p class="text-indigo-300">Manage all registered users in the system.</p>
         <span class="bg-indigo-600 text-white px-3 py-1 rounded-full text-sm">
-            {{ $users->count() }} {{ Str::plural('user', $users->count()) }}
+            {{ $users->count() }} {{ $users->count() === 1 ? 'user' : 'users' }}
         </span>
     </div>
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Database\QueryException;
 
 class AdminController extends Controller
 {
@@ -14,7 +15,7 @@ class AdminController extends Controller
         // Get summary statistics
         try {
             $totalUsers = User::count();
-        } catch (\Exception $e) {
+        } catch (QueryException $e) {
             $totalUsers = 0;
         }
 
@@ -45,7 +46,7 @@ class AdminController extends Controller
     {
         try {
             $users = User::all();
-        } catch (\Exception $e) {
+        } catch (QueryException $e) {
             $users = collect([]);
         }
 
