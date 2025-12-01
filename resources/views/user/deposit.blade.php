@@ -40,22 +40,23 @@
             <!-- Amount Input -->
             <div>
                 <label for="amount" class="block text-sm font-medium text-slate-300 mb-2">
-                    Amount (USD)
+                    Amount (IDR)
                 </label>
                 <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">$</span>
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">Rp</span>
                     <input 
                         type="number" 
                         id="amount" 
                         name="amount" 
-                        min="10" 
-                        step="0.01"
-                        placeholder="0.00"
-                        class="w-full bg-slate-700 border border-slate-600 rounded-xl pl-8 pr-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        min="10000" 
+                        step="1"
+                        placeholder="0"
+                        value="{{ old('amount') }}"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-xl pl-12 pr-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                         required
                     >
                 </div>
-                <p class="mt-2 text-xs text-slate-400">Minimum deposit: $10.00</p>
+                <p class="mt-2 text-xs text-slate-400">Minimum deposit: Rp 10,000</p>
             </div>
 
             <!-- Payment Method Selection -->
