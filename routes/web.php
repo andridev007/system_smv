@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserMenuController;
@@ -22,4 +23,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/transactions', [UserMenuController::class, 'transactions'])->name('user.transactions');
     Route::get('/referral', [UserMenuController::class, 'referral'])->name('user.referral');
     Route::get('/settings', [UserMenuController::class, 'settings'])->name('user.settings');
+});
+
+// Admin Routes (Protected)
+Route::middleware('auth')->prefix('admin')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
+    Route::get('/deposits', [AdminController::class, 'deposits'])->name('admin.deposits');
+    Route::get('/withdrawals', [AdminController::class, 'withdrawals'])->name('admin.withdrawals');
 });
