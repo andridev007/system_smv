@@ -19,7 +19,7 @@
 
     <!-- Investment Plans Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        @foreach($plans as $plan)
+        @foreach($plans ?? [] as $plan)
         <div class="bg-slate-800 rounded-2xl overflow-hidden border border-slate-700 hover:border-purple-500/50 transition">
             <!-- Plan Header -->
             <div class="p-6 {{ $plan['type'] === 'daily' ? 'bg-gradient-to-r from-blue-600 to-cyan-600' : 'bg-gradient-to-r from-purple-600 to-pink-600' }}">

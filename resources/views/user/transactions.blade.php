@@ -61,7 +61,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-700">
-                    @forelse($transactions as $transaction)
+                    @forelse($transactions ?? [] as $transaction)
                     <tr class="hover:bg-slate-700/50 transition">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
@@ -133,7 +133,7 @@
 
         <!-- Mobile List -->
         <div class="md:hidden divide-y divide-slate-700">
-            @forelse($transactions as $transaction)
+            @forelse($transactions ?? [] as $transaction)
             <div class="p-4">
                 <div class="flex items-center justify-between mb-2">
                     <div class="flex items-center gap-3">

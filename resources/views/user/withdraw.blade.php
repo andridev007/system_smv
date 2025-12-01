@@ -17,7 +17,7 @@
     <!-- Balance Card -->
     <div class="bg-gradient-to-r from-orange-600 to-amber-600 rounded-2xl p-6 text-white">
         <p class="text-sm opacity-90 mb-1">Available Balance</p>
-        <p class="text-3xl font-bold">${{ number_format($available_balance, 2) }}</p>
+        <p class="text-3xl font-bold">${{ number_format($available_balance ?? 0, 2) }}</p>
     </div>
 
     <!-- Withdraw Form Card -->
