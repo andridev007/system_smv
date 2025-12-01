@@ -53,6 +53,10 @@ class DashboardTest extends TestCase
             'total_profit',
             'referral_bonus',
             'referral_code',
+            'effective_balance',
+            'remaining_share_profit',
+            'share_profit_bonus',
+            'remaining_bonus',
         ]);
     }
 
@@ -73,11 +77,11 @@ class DashboardTest extends TestCase
         $response->assertSee('Deposit');
         $response->assertSee('Investment');
         $response->assertSee('Withdraw');
-        $response->assertSee('Total Deposit');
-        $response->assertSee('Total Investment');
-        $response->assertSee('Total Withdraw');
-        $response->assertSee('Total Profit');
+        $response->assertSee('Effective Balance');
+        $response->assertSee('Remaining Share Profit');
         $response->assertSee('Referral Bonus');
+        $response->assertSee('Share Profit Bonus');
+        $response->assertSee('Remaining Bonus');
         $response->assertSee('Recent Transactions');
     }
 

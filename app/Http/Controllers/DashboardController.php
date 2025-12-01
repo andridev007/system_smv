@@ -19,6 +19,12 @@ class DashboardController extends Controller
         $referral_bonus = 0.00;
         $referral_code = auth()->user()->referral_code ?? 'SAMUVE001';
 
+        // New specific fields as requested
+        $effective_balance = 0.00;
+        $remaining_share_profit = 0.00;
+        $share_profit_bonus = 0.00;
+        $remaining_bonus = 0.00;
+
         return view('dashboard.index', compact(
             'balance',
             'profit',
@@ -27,7 +33,11 @@ class DashboardController extends Controller
             'total_withdraw',
             'total_profit',
             'referral_bonus',
-            'referral_code'
+            'referral_code',
+            'effective_balance',
+            'remaining_share_profit',
+            'share_profit_bonus',
+            'remaining_bonus'
         ));
     }
 }
