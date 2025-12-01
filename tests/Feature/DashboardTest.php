@@ -53,6 +53,10 @@ class DashboardTest extends TestCase
             'total_profit',
             'referral_bonus',
             'referral_code',
+            'effective_balance',
+            'remaining_share_profit',
+            'share_profit_bonus',
+            'remaining_bonus',
         ]);
     }
 
