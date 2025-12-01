@@ -39,7 +39,7 @@ class UserMenuTest extends TestCase
         $response = $this->actingAs($user)->get('/deposit');
 
         $response->assertSee('Deposit Funds');
-        $response->assertSee('Amount (USD)');
+        $response->assertSee('Amount (IDR)');
         $response->assertSee('Payment Method');
         $response->assertSee('Bitcoin');
         $response->assertSee('Proceed to Payment');

@@ -7,48 +7,43 @@ use Tests\TestCase;
 
 class DepositTest extends TestCase
 {
+    /**
+     * Test that deposit form submission requires authentication.
+     */
     public function test_deposit_submission_requires_authentication(): void
     {
-        $response = $this->post(route('user.deposit.store'), [
-            'amount' => 100000,
+        $response = $this->post('/deposit', [
+            'amount' => 50000,
             'payment_method' => 'bank_transfer',
         ]);
 
-        $response->assertRedirect(route('login'));
+        $response->assertRedirect('/login');
     }
 
-    public function test_deposit_form_validation_requires_amount(): void
+    /**
+     * Test that deposit form submission validates minimum amount.
+     */
+    public function test_deposit_validates_minimum_amount(): void
     {
         $user = User::factory()->make();
 
-        $response = $this->actingAs($user)->post(route('user.deposit.store'), [
-            'payment_method' => 'bank_transfer',
-        ]);
-
-        $response->assertSessionHasErrors('amount');
-    }
-
-    public function test_deposit_form_validation_requires_minimum_amount(): void
-    {
-        $user = User::factory()->make();
-
-        $response = $this->actingAs($user)->post(route('user.deposit.store'), [
-            'amount' => 5,
+        $response = $this->actingAs($user)->post('/deposit', [
+            'amount' => 5000,
             'payment_method' => 'bank_transfer',
         ]);
 
         $response->assertSessionHasErrors('amount');
     }
 
-    public function test_deposit_form_validation_requires_valid_payment_method(): void
+    /**
+     * Test that deposit form submission validates required fields.
+     */
+    public function test_deposit_validates_required_fields(): void
     {
         $user = User::factory()->make();
 
-        $response = $this->actingAs($user)->post(route('user.deposit.store'), [
-            'amount' => 100000,
-            'payment_method' => 'invalid_method',
-        ]);
+        $response = $this->actingAs($user)->post('/deposit', []);
 
-        $response->assertSessionHasErrors('payment_method');
+        $response->assertSessionHasErrors(['amount', 'payment_method']);
     }
 }

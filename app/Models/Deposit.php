@@ -19,7 +19,7 @@ class Deposit extends Model
         'user_id',
         'amount',
         'unique_code',
-        'total_amount',
+        'amount_total',
         'payment_method',
         'status',
     ];
@@ -33,7 +33,7 @@ class Deposit extends Model
     {
         return [
             'amount' => 'decimal:2',
-            'total_amount' => 'decimal:2',
+            'amount_total' => 'decimal:2',
             'unique_code' => 'integer',
         ];
     }
@@ -44,29 +44,5 @@ class Deposit extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Check if the deposit is pending.
-     */
-    public function isPending(): bool
-    {
-        return $this->status === 'pending';
-    }
-
-    /**
-     * Check if the deposit is approved.
-     */
-    public function isApproved(): bool
-    {
-        return $this->status === 'approved';
-    }
-
-    /**
-     * Check if the deposit is rejected.
-     */
-    public function isRejected(): bool
-    {
-        return $this->status === 'rejected';
     }
 }

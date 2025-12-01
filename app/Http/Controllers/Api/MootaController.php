@@ -6,73 +6,57 @@ use App\Http\Controllers\Controller;
 use App\Models\Deposit;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class MootaController extends Controller
 {
     /**
-     * Handle webhook from Moota.co for automated deposit verification.
+     * Handle the callback from Moota.
      */
-    public function handleWebhook(Request $request): JsonResponse
+    public function handleCallback(Request $request): JsonResponse
     {
-        $mutations = $request->input('data', $request->all());
+        // Verify webhook signature
+        $signature = $request->header('X-Moota-Signature');
+        $secretKey = config('services.moota.webhook_secret');
 
-        if (! is_array($mutations)) {
-            $mutations = [$mutations];
-        }
+        if ($secretKey && $signature) {
+            $payload = $request->getContent();
+            $expectedSignature = hash_hmac('sha256', $payload, $secretKey);
 
-        // Handle array of mutations or single mutation object
-        if (isset($mutations['mutation'])) {
-            $mutations = [$mutations];
-        }
-
-        $processedCount = 0;
-
-        foreach ($mutations as $mutation) {
-            // Extract amount from mutation data
-            // Moota sends amount as a positive number for credits
-            $amount = $mutation['amount'] ?? $mutation['credit'] ?? null;
-            $type = $mutation['type'] ?? $mutation['mutation_type'] ?? 'CR';
-
-            // Only process credit (incoming) transactions
-            if ($type !== 'CR' && $type !== 'credit') {
-                continue;
-            }
-
-            if (! $amount || $amount <= 0) {
-                continue;
-            }
-
-            // Find pending deposit matching the total_amount
-            $deposit = Deposit::where('status', 'pending')
-                ->where('total_amount', $amount)
-                ->first();
-
-            if ($deposit) {
-                DB::transaction(function () use ($deposit) {
-                    // Update deposit status to approved
-                    $deposit->update(['status' => 'approved']);
-
-                    // Update user's balance
-                    $user = $deposit->user;
-                    $user->increment('balance', $deposit->amount);
-                });
-
-                Log::info('Deposit auto-approved via Moota webhook', [
-                    'deposit_id' => $deposit->id,
-                    'user_id' => $deposit->user_id,
-                    'amount' => $deposit->amount,
-                    'total_amount' => $deposit->total_amount,
-                ]);
-
-                $processedCount++;
+            if (!hash_equals($expectedSignature, $signature)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid signature',
+                ], 401);
             }
         }
+
+        $amount = $request->input('amount');
+
+        if (!$amount) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Amount is required',
+            ]);
+        }
+
+        $deposit = Deposit::where('status', 'pending')
+            ->where('amount_total', $amount)
+            ->first();
+
+        if (!$deposit) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaction not found',
+            ]);
+        }
+
+        $deposit->update(['status' => 'approved']);
+
+        $user = $deposit->user;
+        $user->increment('balance', $deposit->amount);
 
         return response()->json([
             'success' => true,
-            'message' => "Processed {$processedCount} deposit(s)",
         ]);
     }
 }

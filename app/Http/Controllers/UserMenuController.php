@@ -16,46 +16,39 @@ class UserMenuController extends Controller
     }
 
     /**
-     * Handle deposit submission.
+     * Handle the deposit form submission.
      */
     public function storeDeposit(Request $request)
     {
         $request->validate([
-            'amount' => 'required|numeric|min:10',
-            'payment_method' => 'required|string|in:bitcoin,ethereum,usdt_trc20,bank_transfer',
+            'amount' => 'required|numeric|min:10000',
+            'payment_method' => 'required|string',
         ]);
 
         $amount = $request->input('amount');
-        $maxAttempts = 10;
-        $deposit = null;
+        $uniqueCode = rand(1, 999);
+        $amountTotal = $amount + $uniqueCode;
 
-        // Generate unique total_amount with retry logic to avoid collisions
-        for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
-            $uniqueCode = random_int(1, 9999);
-            $totalAmount = $amount + $uniqueCode;
+        $deposit = Deposit::create([
+            'user_id' => auth()->id(),
+            'amount' => $amount,
+            'unique_code' => $uniqueCode,
+            'amount_total' => $amountTotal,
+            'payment_method' => $request->input('payment_method'),
+            'status' => 'pending',
+        ]);
 
-            // Check if this total_amount already exists for a pending deposit
-            $exists = Deposit::where('status', 'pending')
-                ->where('total_amount', $totalAmount)
-                ->exists();
+        return redirect()->route('user.deposit.confirmation', $deposit->id)
+            ->with('success', 'Deposit request created successfully.');
+    }
 
-            if (! $exists) {
-                $deposit = Deposit::create([
-                    'user_id' => auth()->id(),
-                    'amount' => $amount,
-                    'unique_code' => $uniqueCode,
-                    'total_amount' => $totalAmount,
-                    'payment_method' => $request->input('payment_method'),
-                    'status' => 'pending',
-                ]);
-                break;
-            }
-        }
-
-        if (! $deposit) {
-            return back()->withErrors([
-                'amount' => 'Unable to generate a unique deposit code. Please try again.',
-            ]);
+    /**
+     * Display the deposit confirmation page.
+     */
+    public function depositConfirmation(Deposit $deposit)
+    {
+        if ($deposit->user_id !== auth()->id()) {
+            abort(403);
         }
 
         return view('user.deposit-confirmation', compact('deposit'));
