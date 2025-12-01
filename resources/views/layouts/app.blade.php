@@ -49,7 +49,7 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                         </svg>
-                        <span>Invest</span>
+                        <span>Investment</span>
                     </a>
 
                     <a href="{{ route('withdraw') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg {{ request()->routeIs('withdraw') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700/50' }} transition">

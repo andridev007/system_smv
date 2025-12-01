@@ -96,7 +96,7 @@ class DashboardTest extends TestCase
 
         $response = $this->actingAs($user)->get('/dashboard');
 
-        $response->assertSee('Your Referral Link');
+        $response->assertSee('Referral Link');
         $response->assertSee('TESTCODE123');
     }
 }

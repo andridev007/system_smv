@@ -43,11 +43,11 @@
         </a>
     </div>
 
-    <!-- Stats Cards Grid -->
+    <!-- Stats Cards Grid - Updated to match user's requested card list -->
     <div class="grid grid-cols-2 gap-4">
         <!-- 1. Referral Link Card -->
         <div class="col-span-2 bg-slate-800 rounded-xl p-4">
-            <p class="text-xs text-slate-400 mb-2">Your Referral Link</p>
+            <p class="text-xs text-slate-400 mb-2">Referral Link</p>
             <div class="flex items-center gap-2">
                 <input type="text" readonly value="{{ url('/register?ref=' . $referral_code) }}" 
                     id="referral-link"
