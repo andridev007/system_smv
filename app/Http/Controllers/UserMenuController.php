@@ -113,8 +113,8 @@ class UserMenuController extends Controller
     public function referral()
     {
         $referral_code = auth()->user()->referral_code ?? 'SAMUVE001';
-        $referral_url = url('/register?ref=' . $referral_code);
-        
+        $referral_url = url('/register?ref='.$referral_code);
+
         // Dummy referral data
         $total_referrals = 5;
         $downlines = [
