@@ -12,95 +12,151 @@ class AdminTest extends TestCase
      */
     public function test_admin_dashboard_requires_authentication(): void
     {
-        $response = $this->get('/admin/dashboard');
-
+        $response = $this->get('/admin');
         $response->assertRedirect('/login');
     }
 
     /**
-     * Test that unauthenticated users are redirected to login for users page.
+     * Test that authenticated users can access the admin dashboard.
+     */
+    public function test_authenticated_users_can_access_admin_dashboard(): void
+    {
+        $user = User::factory()->make();
+
+        $response = $this->actingAs($user)->get('/admin');
+
+        $response->assertStatus(200);
+        $response->assertViewIs('admin.dashboard');
+    }
+
+    /**
+     * Test that admin dashboard displays statistics.
+     */
+    public function test_admin_dashboard_displays_statistics(): void
+    {
+        $user = User::factory()->make();
+
+        $response = $this->actingAs($user)->get('/admin');
+
+        $response->assertStatus(200);
+        $response->assertViewHas([
+            'totalUsers',
+            'totalDeposits',
+            'pendingWithdrawals',
+            'activeInvestments',
+        ]);
+        $response->assertSee('Admin Dashboard');
+        $response->assertSee('Total Users');
+        $response->assertSee('Total Deposits (USD)');
+        $response->assertSee('Pending Withdrawals');
+        $response->assertSee('Active Investments');
+    }
+
+    /**
+     * Test that unauthenticated users are redirected to login for admin users page.
      */
     public function test_admin_users_requires_authentication(): void
     {
         $response = $this->get('/admin/users');
-
         $response->assertRedirect('/login');
     }
 
     /**
-     * Test that unauthenticated users are redirected to login for deposits page.
+     * Test that authenticated users can access the admin users page.
+     */
+    public function test_authenticated_users_can_access_admin_users(): void
+    {
+        $user = User::factory()->make();
+
+        $response = $this->actingAs($user)->get('/admin/users');
+
+        $response->assertStatus(200);
+        $response->assertViewIs('admin.users.index');
+    }
+
+    /**
+     * Test that admin users page displays expected content.
+     */
+    public function test_admin_users_page_displays_content(): void
+    {
+        $user = User::factory()->make();
+
+        $response = $this->actingAs($user)->get('/admin/users');
+
+        $response->assertStatus(200);
+        $response->assertSee('Manage Users');
+        $response->assertSee('View and manage all registered users');
+    }
+
+    /**
+     * Test that unauthenticated users are redirected to login for admin deposits page.
      */
     public function test_admin_deposits_requires_authentication(): void
     {
         $response = $this->get('/admin/deposits');
-
         $response->assertRedirect('/login');
     }
 
     /**
-     * Test that unauthenticated users are redirected to login for withdrawals page.
+     * Test that authenticated users can access the admin deposits page.
+     */
+    public function test_authenticated_users_can_access_admin_deposits(): void
+    {
+        $user = User::factory()->make();
+
+        $response = $this->actingAs($user)->get('/admin/deposits');
+
+        $response->assertStatus(200);
+        $response->assertViewIs('admin.deposits.index');
+    }
+
+    /**
+     * Test that admin deposits page displays expected content.
+     */
+    public function test_admin_deposits_page_displays_content(): void
+    {
+        $user = User::factory()->make();
+
+        $response = $this->actingAs($user)->get('/admin/deposits');
+
+        $response->assertStatus(200);
+        $response->assertSee('Deposit Requests');
+        $response->assertSee('Manage pending and completed deposit requests');
+    }
+
+    /**
+     * Test that unauthenticated users are redirected to login for admin withdrawals page.
      */
     public function test_admin_withdrawals_requires_authentication(): void
     {
         $response = $this->get('/admin/withdrawals');
-
         $response->assertRedirect('/login');
     }
 
     /**
-     * Test that unauthenticated users are redirected to login for settings page.
+     * Test that authenticated users can access the admin withdrawals page.
      */
-    public function test_admin_settings_requires_authentication(): void
+    public function test_authenticated_users_can_access_admin_withdrawals(): void
     {
-        $response = $this->get('/admin/settings');
+        $user = User::factory()->make();
 
-        $response->assertRedirect('/login');
-    }
-
-    /**
-     * Test that authenticated users can access the settings page.
-     * Settings page doesn't require database queries.
-     */
-    public function test_authenticated_users_can_access_admin_settings(): void
-    {
-        $user = User::factory()->make([
-            'referral_code' => 'ADMIN010',
-        ]);
-
-        $response = $this->actingAs($user)->get('/admin/settings');
+        $response = $this->actingAs($user)->get('/admin/withdrawals');
 
         $response->assertStatus(200);
-        $response->assertViewIs('admin.settings');
+        $response->assertViewIs('admin.withdrawals.index');
     }
 
     /**
-     * Test that admin settings page contains expected UI elements.
+     * Test that admin withdrawals page displays expected content.
      */
-    public function test_admin_settings_contains_ui_elements(): void
+    public function test_admin_withdrawals_page_displays_content(): void
     {
-        $user = User::factory()->make([
-            'referral_code' => 'ADMIN011',
-        ]);
+        $user = User::factory()->make();
 
-        $response = $this->actingAs($user)->get('/admin/settings');
+        $response = $this->actingAs($user)->get('/admin/withdrawals');
 
-        $response->assertSee('Settings');
-        $response->assertSee('Settings Coming Soon');
-    }
-
-    /**
-     * Test admin routes exist and have correct names.
-     */
-    public function test_admin_routes_exist(): void
-    {
-        $this->assertTrue(\Route::has('admin.dashboard'));
-        $this->assertTrue(\Route::has('admin.users'));
-        $this->assertTrue(\Route::has('admin.deposits'));
-        $this->assertTrue(\Route::has('admin.withdrawals'));
-        $this->assertTrue(\Route::has('admin.settings'));
-        $this->assertTrue(\Route::has('admin.deposits.approve'));
-        $this->assertTrue(\Route::has('admin.deposits.reject'));
-        $this->assertTrue(\Route::has('admin.withdrawals.approve'));
-        $this->assertTrue(\Route::has('admin.withdrawals.reject'));
+        $response->assertStatus(200);
+        $response->assertSee('Withdrawal Requests');
+        $response->assertSee('Manage pending and completed withdrawal requests');
     }
 }
