@@ -26,17 +26,37 @@ class UserMenuController extends Controller
         ]);
 
         $amount = $request->input('amount');
-        $uniqueCode = random_int(1, 999);
-        $totalAmount = $amount + $uniqueCode;
+        $maxAttempts = 10;
+        $deposit = null;
 
-        $deposit = Deposit::create([
-            'user_id' => auth()->id(),
-            'amount' => $amount,
-            'unique_code' => $uniqueCode,
-            'total_amount' => $totalAmount,
-            'payment_method' => $request->input('payment_method'),
-            'status' => 'pending',
-        ]);
+        // Generate unique total_amount with retry logic to avoid collisions
+        for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
+            $uniqueCode = random_int(1, 999);
+            $totalAmount = $amount + $uniqueCode;
+
+            // Check if this total_amount already exists for a pending deposit
+            $exists = Deposit::where('status', 'pending')
+                ->where('total_amount', $totalAmount)
+                ->exists();
+
+            if (! $exists) {
+                $deposit = Deposit::create([
+                    'user_id' => auth()->id(),
+                    'amount' => $amount,
+                    'unique_code' => $uniqueCode,
+                    'total_amount' => $totalAmount,
+                    'payment_method' => $request->input('payment_method'),
+                    'status' => 'pending',
+                ]);
+                break;
+            }
+        }
+
+        if (! $deposit) {
+            return back()->withErrors([
+                'amount' => 'Unable to generate a unique deposit code. Please try again.',
+            ]);
+        }
 
         return view('user.deposit-confirmation', compact('deposit'));
     }
