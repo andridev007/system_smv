@@ -5,21 +5,27 @@ namespace App\Http\Controllers;
 class AdminController extends Controller
 {
     /**
-     * Display the admin dashboard.
+     * Display the admin dashboard with stats.
      */
     public function index()
     {
-        // Dummy statistics for admin dashboard
+        // Statistics for admin dashboard
         $totalUsers = 0;
-        $totalDeposits = 0.00;
+        $totalDeposits = 0.00; // Total Approved Deposits
+        $pendingDeposits = 0;
+        $totalWithdrawals = 0.00; // Total Paid Withdrawals
         $pendingWithdrawals = 0;
-        $activeInvestments = 0;
+
+        // Recent activity (dummy data for now)
+        $recentActivity = [];
 
         return view('admin.dashboard', compact(
             'totalUsers',
             'totalDeposits',
+            'pendingDeposits',
+            'totalWithdrawals',
             'pendingWithdrawals',
-            'activeInvestments'
+            'recentActivity'
         ));
     }
 
@@ -54,5 +60,13 @@ class AdminController extends Controller
         $withdrawals = [];
 
         return view('admin.withdrawals.index', compact('withdrawals'));
+    }
+
+    /**
+     * Display admin settings.
+     */
+    public function settings()
+    {
+        return view('admin.settings');
     }
 }

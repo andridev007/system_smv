@@ -42,14 +42,18 @@ class AdminTest extends TestCase
         $response->assertViewHas([
             'totalUsers',
             'totalDeposits',
+            'pendingDeposits',
+            'totalWithdrawals',
             'pendingWithdrawals',
-            'activeInvestments',
+            'recentActivity',
         ]);
         $response->assertSee('Admin Dashboard');
         $response->assertSee('Total Users');
-        $response->assertSee('Total Deposits (USD)');
+        $response->assertSee('Total Deposits (Approved)');
+        $response->assertSee('Pending Deposits');
+        $response->assertSee('Total Withdrawals (Paid)');
         $response->assertSee('Pending Withdrawals');
-        $response->assertSee('Active Investments');
+        $response->assertSee('Recent Activity');
     }
 
     /**
@@ -158,5 +162,40 @@ class AdminTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Withdrawal Requests');
         $response->assertSee('Manage pending and completed withdrawal requests');
+    }
+
+    /**
+     * Test that /admin/dashboard route works and returns dashboard view.
+     */
+    public function test_admin_dashboard_route_works(): void
+    {
+        $user = User::factory()->make();
+
+        $response = $this->actingAs($user)->get('/admin/dashboard');
+
+        $response->assertStatus(200);
+        $response->assertViewIs('admin.dashboard');
+    }
+
+    /**
+     * Test that unauthenticated users are redirected to login for admin settings page.
+     */
+    public function test_admin_settings_requires_authentication(): void
+    {
+        $response = $this->get('/admin/settings');
+        $response->assertRedirect('/login');
+    }
+
+    /**
+     * Test that authenticated users can access the admin settings page.
+     */
+    public function test_authenticated_users_can_access_admin_settings(): void
+    {
+        $user = User::factory()->make();
+
+        $response = $this->actingAs($user)->get('/admin/settings');
+
+        $response->assertStatus(200);
+        $response->assertViewIs('admin.settings');
     }
 }

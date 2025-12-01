@@ -28,9 +28,11 @@ Route::middleware('auth')->group(function () {
 });
 
 // Admin Routes (Protected)
-Route::middleware('auth')->prefix('admin')->group(function () {
-    Route::get('/', [AdminController::class, 'index'])->name('admin.dashboard');
-    Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
-    Route::get('/deposits', [AdminController::class, 'deposits'])->name('admin.deposits');
-    Route::get('/withdrawals', [AdminController::class, 'withdrawals'])->name('admin.withdrawals');
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('index');
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::get('/deposits', [AdminController::class, 'deposits'])->name('deposits');
+    Route::get('/withdrawals', [AdminController::class, 'withdrawals'])->name('withdrawals');
+    Route::get('/settings', [AdminController::class, 'settings'])->name('settings');
 });
