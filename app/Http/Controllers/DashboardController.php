@@ -40,14 +40,6 @@ class DashboardController extends Controller
             ->sum('active_balance') ?? 0.00;
         Log::info('Dashboard - Effective Balance', ['user_id' => $userId, 'effective_balance' => $effective_balance]);
 
-        // Calculate dream balance (active_balance from active dream-type investments)
-        $dream_balance = DB::table('investments')
-            ->where('user_id', $userId)
-            ->where('type', 'dream')
-            ->where('status', 'active')
-            ->sum('active_balance') ?? 0.00;
-        Log::info('Dashboard - Dream Balance', ['user_id' => $userId, 'dream_balance' => $dream_balance]);
-
         // Calculate total share profits earned
         $total_share_profits = DB::table('share_profits')
             ->join('investments', 'share_profits.investment_id', '=', 'investments.id')
@@ -55,11 +47,11 @@ class DashboardController extends Controller
             ->sum('share_profits.amount') ?? 0.00;
         Log::info('Dashboard - Total Share Profits', ['user_id' => $userId, 'total_share_profits' => $total_share_profits]);
 
-        // Calculate share profits withdrawn
+        // Calculate share profits withdrawn (only approved withdrawals should reduce balance)
         $share_profit_withdrawn = DB::table('withdrawals')
             ->where('user_id', $userId)
             ->where('source', 'share_profit')
-            ->whereIn('status', ['approved', 'pending'])
+            ->where('status', 'approved')
             ->sum('amount') ?? 0.00;
         Log::info('Dashboard - Share Profit Withdrawn', ['user_id' => $userId, 'share_profit_withdrawn' => $share_profit_withdrawn]);
 
@@ -87,11 +79,11 @@ class DashboardController extends Controller
             ->sum('amount') ?? 0.00;
         Log::info('Dashboard - Total Bonuses', ['user_id' => $userId, 'total_bonuses' => $total_bonuses]);
 
-        // Calculate bonuses withdrawn
+        // Calculate bonuses withdrawn (only approved withdrawals should reduce balance)
         $bonuses_withdrawn = DB::table('withdrawals')
             ->where('user_id', $userId)
             ->where('source', 'bonus')
-            ->whereIn('status', ['approved', 'pending'])
+            ->where('status', 'approved')
             ->sum('amount') ?? 0.00;
         Log::info('Dashboard - Bonuses Withdrawn', ['user_id' => $userId, 'bonuses_withdrawn' => $bonuses_withdrawn]);
 
