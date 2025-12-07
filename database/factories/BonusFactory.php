@@ -29,8 +29,8 @@ class BonusFactory extends Factory
             'type' => $type,
             'amount' => fake()->randomFloat(2, 10, 500),
             'level' => $level,
-            'description' => $type === 'referral' 
-                ? "Level {$level} referral bonus" 
+            'description' => $type === 'referral'
+                ? "Level {$level} referral bonus"
                 : "Level {$level} profit share bonus",
         ];
     }
