@@ -25,13 +25,12 @@ class DashboardController extends Controller
         ]);
 
         // Calculate remaining share profit
-        // Total share profits earned from all active investments
-        $total_share_profit_earned = $user->investments()
-            ->where('status', 'active')
-            ->with('shareProfits')
-            ->get()
-            ->flatMap->shareProfits
-            ->sum('amount');
+        // Total share profits earned from all active investments using efficient join
+        $total_share_profit_earned = \DB::table('share_profits')
+            ->join('investments', 'share_profits.investment_id', '=', 'investments.id')
+            ->where('investments.user_id', $userId)
+            ->where('investments.status', 'active')
+            ->sum('share_profits.amount');
 
         // Total approved withdrawals from share_profit source
         $total_share_profit_wd = $user->withdrawals()
