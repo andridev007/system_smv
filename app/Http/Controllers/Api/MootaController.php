@@ -22,7 +22,7 @@ class MootaController extends Controller
             $payload = $request->getContent();
             $expectedSignature = hash_hmac('sha256', $payload, $secretKey);
 
-            if (!hash_equals($expectedSignature, $signature)) {
+            if (! hash_equals($expectedSignature, $signature)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Invalid signature',
@@ -32,7 +32,7 @@ class MootaController extends Controller
 
         $amount = $request->input('amount');
 
-        if (!$amount) {
+        if (! $amount) {
             return response()->json([
                 'success' => false,
                 'message' => 'Amount is required',
@@ -43,7 +43,7 @@ class MootaController extends Controller
             ->where('amount_total', $amount)
             ->first();
 
-        if (!$deposit) {
+        if (! $deposit) {
             return response()->json([
                 'success' => false,
                 'message' => 'Transaction not found',
