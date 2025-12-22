@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Log;
+
 class DashboardController extends Controller
 {
     /**
@@ -9,21 +11,88 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        // Dummy data for dashboard display
-        $balance = 0.00;
-        $profit = 0.00;
-        $total_deposit = 0.00;
-        $total_invest = 0.00;
-        $total_withdraw = 0.00;
-        $total_profit = 0.00;
-        $referral_bonus = 0.00;
-        $referral_code = auth()->user()->referral_code ?? 'SAMUVE001';
+        $user = auth()->user();
+        $userId = $user->id;
 
-        // Additional stats as per user flow requirements
-        $effective_balance = 0.00;
-        $remaining_share_profit = 0.00;
-        $share_profit_bonus = 0.00;
-        $remaining_bonus = 0.00;
+        // Calculate effective balance from active investments
+        $effective_balance = $user->investments()
+            ->where('status', 'active')
+            ->sum('active_balance');
+
+        Log::info('Effective Balance Calculation', [
+            'user_id' => $userId,
+            'effective_balance' => $effective_balance,
+        ]);
+
+        // Calculate remaining share profit
+        // Total share profits earned from all active investments using efficient join
+        $total_share_profit_earned = \DB::table('share_profits')
+            ->join('investments', 'share_profits.investment_id', '=', 'investments.id')
+            ->where('investments.user_id', $userId)
+            ->where('investments.status', 'active')
+            ->sum('share_profits.amount');
+
+        // Total approved withdrawals from share_profit source
+        $total_share_profit_wd = $user->withdrawals()
+            ->where('source', 'share_profit')
+            ->where('status', 'approved')
+            ->sum('amount');
+
+        $remaining_share_profit = $total_share_profit_earned - $total_share_profit_wd;
+
+        Log::info('Remaining Share Profit Calculation', [
+            'user_id' => $userId,
+            'total_share_profit_earned' => $total_share_profit_earned,
+            'total_share_profit_wd' => $total_share_profit_wd,
+            'remaining_share_profit' => $remaining_share_profit,
+        ]);
+
+        // Calculate bonus amounts
+        $referral_bonus = $user->bonuses()
+            ->where('type', 'referral')
+            ->sum('amount');
+
+        $share_profit_bonus = $user->bonuses()
+            ->where('type', 'profit_share')
+            ->sum('amount');
+
+        // Total bonus earned
+        $total_bonus_earned = $referral_bonus + $share_profit_bonus;
+
+        // Total approved withdrawals from bonus source
+        $total_bonus_wd = $user->withdrawals()
+            ->where('source', 'bonus')
+            ->where('status', 'approved')
+            ->sum('amount');
+
+        $remaining_bonus = $total_bonus_earned - $total_bonus_wd;
+
+        Log::info('Bonus Calculations', [
+            'user_id' => $userId,
+            'referral_bonus' => $referral_bonus,
+            'share_profit_bonus' => $share_profit_bonus,
+            'total_bonus_earned' => $total_bonus_earned,
+            'total_bonus_wd' => $total_bonus_wd,
+            'remaining_bonus' => $remaining_bonus,
+        ]);
+
+        // Calculate total lifetime profit
+        $total_profit = $total_share_profit_earned + $total_bonus_earned;
+
+        Log::info('Total Profit Calculation', [
+            'user_id' => $userId,
+            'total_profit' => $total_profit,
+        ]);
+
+        // Other fields for compatibility
+        $balance = $user->balance ?? 0.00;
+        $profit = $remaining_share_profit; // Profit wallet displays remaining share profit
+        $total_deposit = 0.00; // Not implemented yet
+        $total_invest = $user->investments()->sum('amount');
+        $total_withdraw = $user->withdrawals()
+            ->where('status', 'approved')
+            ->sum('final_amount');
+        $referral_code = $user->referral_code ?? 'SAMUVE001';
 
         return view('dashboard.index', compact(
             'balance',

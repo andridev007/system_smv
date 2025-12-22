@@ -3,10 +3,13 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class DashboardTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * Test that unauthenticated users are redirected to login.
      */
@@ -22,7 +25,7 @@ class DashboardTest extends TestCase
      */
     public function test_authenticated_users_can_access_dashboard(): void
     {
-        $user = User::factory()->make([
+        $user = User::factory()->create([
             'referral_code' => 'TESTCODE123',
         ]);
 
@@ -37,7 +40,7 @@ class DashboardTest extends TestCase
      */
     public function test_dashboard_contains_expected_data(): void
     {
-        $user = User::factory()->make([
+        $user = User::factory()->create([
             'referral_code' => 'TESTCODE123',
         ]);
 
@@ -65,7 +68,7 @@ class DashboardTest extends TestCase
      */
     public function test_dashboard_contains_ui_elements(): void
     {
-        $user = User::factory()->make([
+        $user = User::factory()->create([
             'referral_code' => 'TESTCODE123',
         ]);
 
@@ -90,7 +93,7 @@ class DashboardTest extends TestCase
      */
     public function test_dashboard_displays_referral_link(): void
     {
-        $user = User::factory()->make([
+        $user = User::factory()->create([
             'referral_code' => 'TESTCODE123',
         ]);
 
