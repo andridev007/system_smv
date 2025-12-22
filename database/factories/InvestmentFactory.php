@@ -11,6 +11,11 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class InvestmentFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
     protected $model = Investment::class;
 
     /**
@@ -20,16 +25,16 @@ class InvestmentFactory extends Factory
      */
     public function definition(): array
     {
-        $amount = fake()->randomFloat(2, 100, 10000);
-        $licenseFee = $amount * 0.1; // 10% license fee
+        $amount = $this->faker->randomFloat(2, 100, 10000);
+        $licenseFee = $amount * 0.10; // 10% license fee
         $activeBalance = $amount - $licenseFee;
 
         return [
             'user_id' => User::factory(),
-            'type' => fake()->randomElement(['daily', 'dream']),
+            'type' => $this->faker->randomElement(['daily', 'dream']),
             'amount' => $amount,
             'license_fee' => $licenseFee,
-            'unique_code' => fake()->numberBetween(100000, 999999),
+            'unique_code' => $this->faker->numberBetween(100, 999),
             'total_transfer' => $amount + $licenseFee,
             'status' => 'active',
             'proof_image' => null,
@@ -45,6 +50,7 @@ class InvestmentFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'status' => 'pending',
+            'effective_date' => null,
         ]);
     }
 
@@ -76,6 +82,27 @@ class InvestmentFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'status' => 'rejected',
+            'effective_date' => null,
+        ]);
+    }
+
+    /**
+     * Indicate that the investment is daily type.
+     */
+    public function daily(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => 'daily',
+        ]);
+    }
+
+    /**
+     * Indicate that the investment is dream type.
+     */
+    public function dream(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => 'dream',
         ]);
     }
 }

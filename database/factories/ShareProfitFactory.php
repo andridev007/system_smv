@@ -11,6 +11,11 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ShareProfitFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
     protected $model = ShareProfit::class;
 
     /**
@@ -20,13 +25,13 @@ class ShareProfitFactory extends Factory
      */
     public function definition(): array
     {
-        $percentage = fake()->randomFloat(2, 0.5, 5);
-        $amount = fake()->randomFloat(2, 10, 1000);
+        $percentage = $this->faker->randomFloat(2, 1, 20);
+        $amount = $this->faker->randomFloat(2, 10, 1000);
 
         return [
             'investment_id' => Investment::factory(),
             'amount' => $amount,
-            'date' => fake()->dateTimeBetween('-30 days', 'now'),
+            'date' => $this->faker->dateTimeBetween('-30 days', 'now'),
             'percentage' => $percentage,
         ];
     }

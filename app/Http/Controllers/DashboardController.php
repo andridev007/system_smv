@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
@@ -13,85 +14,99 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
         $userId = $user->id;
+        
+        // Get user's balance from users table
+        $balance = $user->balance ?? 0.00;
+        Log::info('Dashboard - User Balance', ['user_id' => $userId, 'balance' => $balance]);
 
-        // Calculate effective balance from active investments
-        $effective_balance = $user->investments()
+        // Calculate total deposits (approved deposits)
+        $total_deposit = DB::table('deposits')
+            ->where('user_id', $userId)
+            ->where('status', 'approved')
+            ->sum('amount') ?? 0.00;
+        Log::info('Dashboard - Total Deposit', ['user_id' => $userId, 'total_deposit' => $total_deposit]);
+
+        // Calculate total investments (active + completed)
+        $total_invest = DB::table('investments')
+            ->where('user_id', $userId)
+            ->whereIn('status', ['active', 'completed'])
+            ->sum('amount') ?? 0.00;
+        Log::info('Dashboard - Total Invest', ['user_id' => $userId, 'total_invest' => $total_invest]);
+
+        // Calculate effective balance (sum of active_balance from active investments)
+        $effective_balance = DB::table('investments')
+            ->where('user_id', $userId)
             ->where('status', 'active')
-            ->sum('active_balance');
+            ->sum('active_balance') ?? 0.00;
+        Log::info('Dashboard - Effective Balance', ['user_id' => $userId, 'effective_balance' => $effective_balance]);
 
-        Log::info('Effective Balance Calculation', [
-            'user_id' => $userId,
-            'effective_balance' => $effective_balance,
-        ]);
-
-        // Calculate remaining share profit
-        // Total share profits earned from all active investments using efficient join
-        $total_share_profit_earned = \DB::table('share_profits')
+        // Calculate total share profits earned
+        $total_share_profits = DB::table('share_profits')
             ->join('investments', 'share_profits.investment_id', '=', 'investments.id')
             ->where('investments.user_id', $userId)
-            ->where('investments.status', 'active')
-            ->sum('share_profits.amount');
+            ->sum('share_profits.amount') ?? 0.00;
+        Log::info('Dashboard - Total Share Profits', ['user_id' => $userId, 'total_share_profits' => $total_share_profits]);
 
-        // Total approved withdrawals from share_profit source
-        $total_share_profit_wd = $user->withdrawals()
+        // Calculate share profits withdrawn (only approved withdrawals should reduce balance)
+        $share_profit_withdrawn = DB::table('withdrawals')
+            ->where('user_id', $userId)
             ->where('source', 'share_profit')
             ->where('status', 'approved')
-            ->sum('amount');
+            ->sum('amount') ?? 0.00;
+        Log::info('Dashboard - Share Profit Withdrawn', ['user_id' => $userId, 'share_profit_withdrawn' => $share_profit_withdrawn]);
 
-        $remaining_share_profit = $total_share_profit_earned - $total_share_profit_wd;
+        // Remaining share profit = total earned - withdrawn
+        $remaining_share_profit = max(0, $total_share_profits - $share_profit_withdrawn);
+        Log::info('Dashboard - Remaining Share Profit', ['user_id' => $userId, 'remaining_share_profit' => $remaining_share_profit]);
 
-        Log::info('Remaining Share Profit Calculation', [
-            'user_id' => $userId,
-            'total_share_profit_earned' => $total_share_profit_earned,
-            'total_share_profit_wd' => $total_share_profit_wd,
-            'remaining_share_profit' => $remaining_share_profit,
-        ]);
-
-        // Calculate bonus amounts
-        $referral_bonus = $user->bonuses()
+        // Calculate referral bonus (bonuses where type = 'referral')
+        $referral_bonus = DB::table('bonuses')
+            ->where('user_id', $userId)
             ->where('type', 'referral')
-            ->sum('amount');
+            ->sum('amount') ?? 0.00;
+        Log::info('Dashboard - Referral Bonus', ['user_id' => $userId, 'referral_bonus' => $referral_bonus]);
 
-        $share_profit_bonus = $user->bonuses()
+        // Calculate share profit bonus (bonuses where type = 'profit_share')
+        $share_profit_bonus = DB::table('bonuses')
+            ->where('user_id', $userId)
             ->where('type', 'profit_share')
-            ->sum('amount');
+            ->sum('amount') ?? 0.00;
+        Log::info('Dashboard - Share Profit Bonus', ['user_id' => $userId, 'share_profit_bonus' => $share_profit_bonus]);
 
-        // Total bonus earned
-        $total_bonus_earned = $referral_bonus + $share_profit_bonus;
+        // Calculate total bonuses
+        $total_bonuses = DB::table('bonuses')
+            ->where('user_id', $userId)
+            ->sum('amount') ?? 0.00;
+        Log::info('Dashboard - Total Bonuses', ['user_id' => $userId, 'total_bonuses' => $total_bonuses]);
 
-        // Total approved withdrawals from bonus source
-        $total_bonus_wd = $user->withdrawals()
+        // Calculate bonuses withdrawn (only approved withdrawals should reduce balance)
+        $bonuses_withdrawn = DB::table('withdrawals')
+            ->where('user_id', $userId)
             ->where('source', 'bonus')
             ->where('status', 'approved')
-            ->sum('amount');
+            ->sum('amount') ?? 0.00;
+        Log::info('Dashboard - Bonuses Withdrawn', ['user_id' => $userId, 'bonuses_withdrawn' => $bonuses_withdrawn]);
 
-        $remaining_bonus = $total_bonus_earned - $total_bonus_wd;
+        // Remaining bonus = total bonuses - withdrawn
+        $remaining_bonus = max(0, $total_bonuses - $bonuses_withdrawn);
+        Log::info('Dashboard - Remaining Bonus', ['user_id' => $userId, 'remaining_bonus' => $remaining_bonus]);
 
-        Log::info('Bonus Calculations', [
-            'user_id' => $userId,
-            'referral_bonus' => $referral_bonus,
-            'share_profit_bonus' => $share_profit_bonus,
-            'total_bonus_earned' => $total_bonus_earned,
-            'total_bonus_wd' => $total_bonus_wd,
-            'remaining_bonus' => $remaining_bonus,
-        ]);
-
-        // Calculate total lifetime profit
-        $total_profit = $total_share_profit_earned + $total_bonus_earned;
-
-        Log::info('Total Profit Calculation', [
-            'user_id' => $userId,
-            'total_profit' => $total_profit,
-        ]);
-
-        // Other fields for compatibility
-        $balance = $user->balance ?? 0.00;
-        $profit = $remaining_share_profit; // Profit wallet displays remaining share profit
-        $total_deposit = 0.00; // Not implemented yet
-        $total_invest = $user->investments()->sum('amount');
-        $total_withdraw = $user->withdrawals()
+        // Calculate total withdrawals (approved)
+        $total_withdraw = DB::table('withdrawals')
+            ->where('user_id', $userId)
             ->where('status', 'approved')
-            ->sum('final_amount');
+            ->sum('final_amount') ?? 0.00;
+        Log::info('Dashboard - Total Withdraw', ['user_id' => $userId, 'total_withdraw' => $total_withdraw]);
+
+        // Calculate total profit (share profits + bonuses)
+        $total_profit = $total_share_profits + $total_bonuses;
+        Log::info('Dashboard - Total Profit', ['user_id' => $userId, 'total_profit' => $total_profit]);
+
+        // Profit wallet balance (remaining share profits + remaining bonuses)
+        $profit = $remaining_share_profit + $remaining_bonus;
+        Log::info('Dashboard - Profit Wallet', ['user_id' => $userId, 'profit' => $profit]);
+
+        // Get referral code
         $referral_code = $user->referral_code ?? 'SAMUVE001';
 
         return view('dashboard.index', compact(
