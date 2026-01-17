@@ -74,4 +74,15 @@ class WithdrawalFactory extends Factory
             'status' => 'rejected',
         ]);
     }
+
+    /**
+     * Indicate that the withdrawal is completed.
+     */
+    public function completed(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'completed',
+            'proof_image' => 'withdrawal_proofs/proof_' . time() . '.jpg',
+        ]);
+    }
 }
