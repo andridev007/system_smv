@@ -73,6 +73,14 @@ class Withdrawal extends Model
     }
 
     /**
+     * Check if the withdrawal is completed.
+     */
+    public function isCompleted(): bool
+    {
+        return $this->status === 'completed';
+    }
+
+    /**
      * Check if the source is investment.
      */
     public function isFromInvestment(): bool
