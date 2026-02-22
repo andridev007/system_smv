@@ -34,5 +34,6 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/users', [AdminController::class, 'users'])->name('users');
     Route::get('/deposits', [AdminController::class, 'deposits'])->name('deposits');
     Route::get('/withdrawals', [AdminController::class, 'withdrawals'])->name('withdrawals');
+    Route::post('/withdrawals/{id}/approve', [AdminController::class, 'approveWithdraw'])->name('withdrawals.approve');
     Route::get('/settings', [AdminController::class, 'settings'])->name('settings');
 });

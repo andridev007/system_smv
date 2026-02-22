@@ -4,6 +4,18 @@
 
 @section('content')
 <div class="p-4 lg:p-6 space-y-6">
+    <!-- Flash Messages -->
+    @if(session('success'))
+        <div class="bg-green-500/20 border border-green-500 text-green-400 px-4 py-3 rounded-lg">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="bg-red-500/20 border border-red-500 text-red-400 px-4 py-3 rounded-lg">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <!-- Header -->
     <div class="flex items-center justify-between">
         <div>
@@ -70,6 +82,10 @@
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-500/20 text-green-400">
                                         Approved
                                     </span>
+                                @elseif(($withdrawal->status ?? '') === 'completed')
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-500/20 text-blue-400">
+                                        Completed
+                                    </span>
                                 @else
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-500/20 text-red-400">
                                         Rejected
@@ -78,12 +94,20 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm">
                                 @if(($withdrawal->status ?? 'pending') === 'pending')
-                                    <button class="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded transition mr-2">
-                                        Approve
-                                    </button>
-                                    <button class="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded transition">
+                                    <form action="{{ route('admin.withdrawals.approve', $withdrawal->id) }}" method="POST" enctype="multipart/form-data" class="inline-block">
+                                        @csrf
+                                        <input type="file" name="proof_image" accept="image/*" required class="hidden" id="proof_{{ $withdrawal->id }}" onchange="this.form.submit()">
+                                        <label for="proof_{{ $withdrawal->id }}" class="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded transition cursor-pointer">
+                                            Upload Proof
+                                        </label>
+                                    </form>
+                                    <button class="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded transition ml-2">
                                         Reject
                                     </button>
+                                @elseif(($withdrawal->status ?? '') === 'completed')
+                                    <a href="{{ asset('storage/' . $withdrawal->proof_image) }}" target="_blank" class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded transition">
+                                        View Proof
+                                    </a>
                                 @else
                                     <span class="text-slate-500 text-xs">No actions available</span>
                                 @endif

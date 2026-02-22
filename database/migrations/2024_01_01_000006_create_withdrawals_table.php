@@ -19,7 +19,7 @@ return new class extends Migration
             $table->decimal('final_amount', 15, 2);
             $table->enum('source', ['investment', 'share_profit', 'bonus']);
             $table->json('bank_details_snapshot');
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('status', ['pending', 'approved', 'rejected', 'completed'])->default('pending');
             $table->string('proof_image')->nullable();
             $table->timestamps();
         });
